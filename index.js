@@ -42,7 +42,7 @@ client.on('message', message => {
     } else if (command == 'spoiler'){
         message.channel.send('||' + args + '||')
         
-    } else if (command === ''){
+    } else if (command === 'kick'){
         client.commands.get('kick').execute(message, args)
 
     } else if (command === 'ban'){
