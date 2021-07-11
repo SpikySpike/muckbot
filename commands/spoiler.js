@@ -3,7 +3,5 @@ module.exports = {
     description: "spoiler a message!",
     execute(message, args){
             message.channel.send('||' + message.author.args + '||')
-
-
     }
 }
