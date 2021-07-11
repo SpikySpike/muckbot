@@ -9,6 +9,7 @@
   "author": "SpikySpike",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "^12.5.3"
+    "discord.js": "^12.5.3",
+    "images-scraper": "^6.3.0"
   }
 }
