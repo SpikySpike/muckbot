@@ -65,6 +65,8 @@ client.on('message', message => {
         
     } else if (command === 'leave'){
         client.commands.get('leave').execute(message, args);
+    } else if (command === 'turnoff'){
+        message.channel.send('Goodbye! :heart:');
     }
 });
 
