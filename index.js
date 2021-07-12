@@ -89,6 +89,9 @@ client.on('message', message => {
         
     } else if (command === 'command'){
         client.commands.get('command').execute(message, args, Discord);
+
+    } else if (command == 'whoppa'){
+        message.channel.send('DID U GET A WHOPPA? :hamburger:');
     }
 });
 
