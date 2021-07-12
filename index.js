@@ -82,7 +82,7 @@ client.on('message', message => {
         process.exit(1);
 
     } else if (command == 'say2'){
-        message.channel.send(args.join(' ') + ' @everyone');
+        message.channel.send(args.join(' '));
 
     } else if (command === 'clear'){
         client.commands.get('clear').execute(message, args);
