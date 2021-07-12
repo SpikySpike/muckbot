@@ -1,7 +1,8 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
-const prefix = 's!';
+const prefix = 's!' || 's1';
 const fs = require('fs');
+const dotenv = require('dotenv').config();
 
 client.commands = new Discord.Collection();
 const commandFiles = fs.readdirSync('./commands/').filter(file => file.endsWith('.js'));
@@ -43,7 +44,7 @@ client.on('message', message => {
     } else if (command == 'hello'){
         message.channel.send('Hello ' + '@' + message.author.username + message.author.tag + '!');
 
-    } else if (command == 'pls'){
+    } else if (command == 'admin'){
         message.channel.send('https://tenor.com/view/dance-moves-dancing-singer-groovy-gif-17029825 ' + args);
 
     } else if (command == 'say'){
@@ -81,7 +82,7 @@ client.on('message', message => {
         process.exit(1);
 
     } else if (command == 'say2'){
-        message.channel.send(args.join(' ') + ' @Xswezzy#1802');
+        message.channel.send(args.join(' ') + ' @everyone');
 
     } else if (command === 'clear'){
         client.commands.get('clear').execute(message, args);
@@ -91,4 +92,4 @@ client.on('message', message => {
     }
 });
 
-client.login(config.token);
+client.login(process.env.DISCORD_TOKEN);
