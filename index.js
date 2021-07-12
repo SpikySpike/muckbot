@@ -16,8 +16,18 @@ client.once('ready', () => {
     console.log('SpikyBot is online!')
 });
 
+client.on('guildMemberAdd', guildMember =>{
+    let welcomeRole =  guildMember.guild.roles.cache.find(role => role.name === 'Member');
+
+    guildMember.roles.add(welcomeRole);
+    guildMember.guild.channels.cache.get('864056495569764383').send(`Welcome <@${guildMember.user}> to our server! :anatomical_heart:`);
+});
+
 
 client.on('message', message => {
+
+
+
     if(!message.content.startsWith(prefix) || message.author.bot) return;
 
     const args = message.content.slice(prefix.length).split(/ +/);
@@ -37,7 +47,7 @@ client.on('message', message => {
         message.channel.send('https://tenor.com/view/dance-moves-dancing-singer-groovy-gif-17029825 ' + args);
 
     } else if (command == 'say'){
-        message.channel.send(message.author.username + ' said ' + args.join(' '));
+        message.reply   (' said ' + args.join(' '));
 
     } else if (command == 'spoiler'){
         message.channel.send('||' + args + '||');
@@ -65,8 +75,17 @@ client.on('message', message => {
         
     } else if (command === 'leave'){
         client.commands.get('leave').execute(message, args);
+
     } else if (command === 'turnoff'){
-        message.channel.send('Goodbye! :heart:');
+        message.channel.send('Goodbye! :heart:'); //Turns off the bot.
+        process.exit(1);
+
+    } else if (command == 'say2'){
+        message.channel.send(args.join(' ') + ' @everyone');
+
+    } else if (command === 'clear'){
+        client.commands.get('clear').execute(message, args);
+        
     }
 });
 
