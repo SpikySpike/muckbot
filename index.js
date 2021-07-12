@@ -13,7 +13,7 @@ for(const file of commandFiles){
 
 
 client.once('ready', () => {
-    console.log('SpikyBot is online!')
+    console.log('SpikyBot is online!');
 });
 
 client.on('guildMemberAdd', guildMember =>{
@@ -86,6 +86,8 @@ client.on('message', message => {
     } else if (command === 'clear'){
         client.commands.get('clear').execute(message, args);
         
+    } else if (command === 'command'){
+        client.commands.get('command').execute(message, args, Discord);
     }
 });
 
