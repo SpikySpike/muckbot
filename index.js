@@ -28,37 +28,43 @@ client.on('message', message => {
         client.commands.get('ping').execute(message, args);
         
     } else if (command == 'yt'){
-        message.channel.send("Check out author's channel! " + 'https://www.youtube.com/channel/UCmWj2jCeTgjTSFvqNjUDywg')
+        message.channel.send("Check out author's channel! " + 'https://www.youtube.com/channel/UCmWj2jCeTgjTSFvqNjUDywg');
 
     } else if (command == 'hello'){
-        message.channel.send('Hello ' + '@' + message.author.username + message.author.tag + '!')
+        message.channel.send('Hello ' + '@' + message.author.username + message.author.tag + '!');
 
     } else if (command == 'pls'){
-        message.channel.send('https://tenor.com/view/dance-moves-dancing-singer-groovy-gif-17029825 ' + args)
+        message.channel.send('https://tenor.com/view/dance-moves-dancing-singer-groovy-gif-17029825 ' + args);
 
     } else if (command == 'say'){
-        message.channel.send(message.author.username + ' said ' + args.join(' '))
+        message.channel.send(message.author.username + ' said ' + args.join(' '));
 
     } else if (command == 'spoiler'){
-        message.channel.send('||' + args + '||')
+        message.channel.send('||' + args + '||');
         
     } else if (command === 'kick'){
-        client.commands.get('kick').execute(message, args)
+        client.commands.get('kick').execute(message, args);
 
     } else if (command === 'ban'){
-        client.commands.get('ban').execute(message, args)
+        client.commands.get('ban').execute(message, args);
 
     } else if (command == 'twitter'){
-        message.channel.send('https://twitter.com/' + args + " follow them! :rocket:")
+        message.channel.send('https://twitter.com/' + args + " follow them! :rocket:");
 
     } else if (command == 'reddit'){
-        message.channel.send('https://www.reddit.com/' + args + " go check this out! :flying_saucer:")
+        message.channel.send('https://www.reddit.com/' + args + " go check this out! :flying_saucer:");
         
     } else if (command == 'youtube'){
-        message.channel.send('https://www.youtube.com/' + args + " go check this out!")
+        message.channel.send('https://www.youtube.com/' + args + " go check this out!");
 
     } else if (command === 'image'){
-        client.commands.get('image').execute(message, args)
+        client.commands.get('image').execute(message, args);
+
+    } else if (command === 'play'){
+        client.commands.get('play').execute(message, args);
+        
+    } else if (command === 'leave'){
+        client.commands.get('leave').execute(message, args);
     }
 });
 
