@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
-const prefix = 's!' || 's1';
+const { default_prefix } = require('./config.json')
+const db = require('quick.db')
 const fs = require('fs');
 const dotenv = require('dotenv').config();
 
@@ -14,7 +15,7 @@ for(const file of commandFiles){
 
 
 client.once('ready', () => {
-    console.log('SpikyBot is online!');
+    console.log('Muck is online!');
 });
 
 client.on('guildMemberAdd', guildMember =>{
@@ -28,10 +29,11 @@ client.on('guildMemberAdd', guildMember =>{
 client.on('message', message => {
 
 
-
-    if(!message.content.startsWith(prefix) || message.author.bot) return;
-
-    const args = message.content.slice(prefix.length).split(/ +/);
+    if(!message.content.startsWith(default_prefix) || message.author.bot) return;
+    if(!message.quild) return;
+    let prefix = db.get(`prefix${message.quild.id}`)
+    if(prefix === null) prefix = default_prefix;
+    const args = message.content.slice(default_prefix.length).split(/ +/);
     const command = args.shift().toLowerCase();
 
     
@@ -92,6 +94,9 @@ client.on('message', message => {
 
     } else if (command == 'whoppa'){
         message.channel.send('DID U GET A WHOPPA? :hamburger:');
+
+    } else if (command === 'setprefix'){
+        client.commands.get('setprefix').execute(message.args);
     }
 });
 
