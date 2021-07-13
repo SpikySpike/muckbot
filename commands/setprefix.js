@@ -2,7 +2,7 @@ const db = require('quick.db')
 const { default_prefix } = require('../config.json')
 
 module.exports = {
-    name: 'setprefix',
+    name: '.',
     usage: "setprefix <new prefix>",
     description: "Set a new prefix!",
     run: async (client, message, args) => {

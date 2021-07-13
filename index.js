@@ -30,9 +30,7 @@ client.on('message', message => {
 
 
     if(!message.content.startsWith(default_prefix) || message.author.bot) return;
-    if(!message.quild) return;
-    let prefix = db.get(`prefix${message.quild.id}`)
-    if(prefix === null) prefix = default_prefix;
+    
     const args = message.content.slice(default_prefix.length).split(/ +/);
     const command = args.shift().toLowerCase();
 
@@ -95,8 +93,8 @@ client.on('message', message => {
     } else if (command == 'whoppa'){
         message.channel.send('DID U GET A WHOPPA? :hamburger:');
 
-    } else if (command === 'setprefix'){
-        client.commands.get('setprefix').execute(message.args);
+    } else if (command === ''){
+        client.commands.get('').execute(message.args);
     }
 });
 
