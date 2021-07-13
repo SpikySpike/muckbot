@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
-const { default_prefix } = require('./config.json')
-const db = require('quick.db')
+const prefix = 's!';
+const db = require('quick.db');
 const fs = require('fs');
 const dotenv = require('dotenv').config();
 
@@ -19,21 +19,24 @@ client.once('ready', () => {
 });
 
 client.on('guildMemberAdd', guildMember =>{
-    let welcomeRole =  guildMember.guild.roles.cache.find(role => role.name === 'Member');
+    let welcomeRole =  guildMember.guild.roles.cache.find(role => role.id === '863413406152785978');
 
-    guildMember.roles.add(welcomeRole);
-    guildMember.guild.channels.cache.get('864056495569764383').send(`Welcome <@${guildMember.user}> to our server! :anatomical_heart:`);
+    guildMember.roles.add(welcomeRole || '863413406152785978');
+    guildMember.guild.channels.cache.get('864437914653163541').send(`Welcome ${guildMember.user} to our server! :anatomical_heart:`);
 });
 
 
 client.on('message', message => {
 
 
-    if(!message.content.startsWith(default_prefix) || message.author.bot) return;
-    
-    const args = message.content.slice(default_prefix.length).split(/ +/);
+    if(!message.content.startsWith(prefix) || message.author.bot) return;
+
+    const args = message.content.slice(prefix.length).split(/ +/);
     const command = args.shift().toLowerCase();
 
+    if(command < 1){
+        message.channel.send('You have to insert something!')
+    }
     
     if(command === 'ping'){
         client.commands.get('ping').execute(message, args);
@@ -92,6 +95,9 @@ client.on('message', message => {
 
     } else if (command == 'whoppa'){
         message.channel.send('DID U GET A WHOPPA? :hamburger:');
+
+    } else if (command === ''){
+        client.commands.get('').execute(message.args);
 
     } else if (command === ''){
         client.commands.get('').execute(message.args);
