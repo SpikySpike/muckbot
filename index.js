@@ -101,6 +101,9 @@ client.on('message', message => {
 
     } else if (command === ''){
         client.commands.get('').execute(message.args);
+        
+    } else if (command === 'dumbrate'){
+        client.commands.get('dumbrate').execute(message.args);
     }
 });
 
