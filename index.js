@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
-const prefix = 's!';
+const prefix = 'pls ';
 const db = require('quick.db');
 const fs = require('fs');
 const dotenv = require('dotenv').config();
@@ -115,7 +115,7 @@ client.on('message', message => {
         }
 
     } else if (command === 'rps') {
-        if (args[1]) {
+        if (args < 1) {
             return message.channel.send('Please include ur choice.')
         }
 
@@ -123,34 +123,36 @@ client.on('message', message => {
         if (choices.includes((args[0]).toLowerCase())) {
             let number = Math.floor(Math.random() * 3);
             if (number == 1) {
-                return message.channel.send(`It was a tie, we both had ***${(args[0]).toLowerCase()}***`)
+                return message.channel.send(`It was a tie, we both had **${(args[0]).toLowerCase()}**`)
             }
             if (number == 2) {
                 if ((args[0]).toLowerCase() == "rock") {
-                    return message.channel.send('I won! I had paper.')
+                    return message.channel.send('I won! I had **paper**.')
                 }
                 if ((args[0]).toLowerCase() == "paper") {
-                    return message.channel.send('I won! I had scissors.')
+                    return message.channel.send('I won! I had **scissors**.')
                 }
                 if ((args[0]).toLowerCase() == "scissors") {
-                    return message.channel.send('I won! I had rock.')
+                    return message.channel.send('I won! I had **rock**.')
                 }
 
             }
             if (number == 0) {
                 if ((args[0]).toLowerCase() == "rock") {
-                    return message.channel.send('You won! I had scissors.')
+                    return message.channel.send('You won! I had **scissors**.')
                 }
                 if ((args[0]).toLowerCase() == "paper") {
-                    return message.channel.send('You won! I had rock.')
+                    return message.channel.send('You won! I had **rock**.')
                 }
                 if ((args[0]).toLowerCase() == "scissors") {
-                    return message.channel.send('You won! I had paper.')
+                    return message.channel.send('You won! I had **paper**.')
                 }
             }
         } else {
-            return message.channel.send('Please include either: Rock, Paper or Scissors.')
+            return message.channel.send('Please include either: **Rock**, **Paper** or **Scissors**.')
         }
+    } else if (command === '.sing') {
+        client.commands.get('').execute(message, args);
     }
 });
 

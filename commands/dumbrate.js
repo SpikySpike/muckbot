@@ -3,7 +3,7 @@ module.exports = {
     description: "dumbrate",
     execute(message, args){
         let number = Math.floor(Math.random() * 101);
-        if (!args[1]){
+        if (!args[0]){
         return message.channel.send('You are ' + number + '% dumb :face_with_monocle:');
         } else {
             let user = message.mentions.user.first();
