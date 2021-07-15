@@ -153,6 +153,8 @@ client.on('message', message => {
         }
     } else if (command === '.sing') {
         client.commands.get('').execute(message, args);
+    } else if (command === 'help'){
+        message.channel.send('still being built')
     }
 });
 
