@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
-const prefix = 'pls ';
+const prefix = 's!';
 const db = require('quick.db');
 const fs = require('fs');
 const dotenv = require('dotenv').config();
@@ -19,11 +19,35 @@ client.once('ready', () => {
 });
 
 client.on('guildMemberAdd', guildMember => {
-    let welcomeRole = guildMember.guild.roles.cache.find(role => role.id === '863413406152785978');
+    let welcomeRole = guildMember.guild.roles.cache.find(role => role.id === '863413406152785978' || '792094322484969482');
 
-    guildMember.roles.add(welcomeRole || '863413406152785978');
-    guildMember.guild.channels.cache.get('864437914653163541').send(`Welcome ${guildMember.user} to our server! :anatomical_heart:`);
+    guildMember.roles.add(welcomeRole);
+    guildMember.guild.channels.cache.get('864437914653163541' || '866954917087281182').send(`Welcome ${guildMember.user} to our server! :anatomical_heart:`);
 });
+
+/*
+var emojiname = ["🎮", "🖥️", "🎵", "🎙️", "🎞️", "🎨", "✍️", "💩"],
+    rolename = ["Game Developer", "Programmer", "Musician", "Voice Actor", "Animator", "Illustrator", "Writer", "Shitposter"];
+
+client.on("messageReactionAdd", (e, user) => {
+	if (user && !user.bot && e.message.channel.guild)
+        for (let o in emojiname)
+            if (e.emoji.name == emojiname[o]) {
+                let i = e.message.guild.roles.cache.find(e => e.name == rolename[o]);
+				e.message.guild.member(user).roles.add(i).catch(console.error);
+				// console.log('added role');
+			}
+});
+
+client.on("messageReactionRemove", (e, n) => {
+    if (n && !n.bot && e.message.channel.guild)
+        for (let o in emojiname)
+            if (e.emoji.name == emojiname[o]) {
+                let i = e.message.guild.roles.cache.find(e => e.name == rolename[o]);
+				e.message.guild.member(n).roles.remove(i).catch(console.error)
+				// console.log('removed role');
+            }
+});*/
 
 
 client.on('message', message => {
