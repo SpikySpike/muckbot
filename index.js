@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
-const prefix = 's!';
+const prefix = 'pls ';
 const db = require('quick.db');
 const fs = require('fs');
 const dotenv = require('dotenv').config();
@@ -206,6 +206,11 @@ client.on('message', message => {
             return message.channel.send("ask ur mom peasant :rofl: :point_right:")
         }
 
+    } else if (command === 'ratio') {
+        client.commands.get('ratio').execute(message, args, Discord, client)
+
+    } else if (command === '.assist') {
+        client.commands.get('.assist').execute(message, args)
     }
 });
 
