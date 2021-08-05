@@ -25,31 +25,6 @@ client.on('guildMemberAdd', guildMember => {
     guildMember.guild.channels.cache.get('864437914653163541' || '866954917087281182').send(`Welcome ${guildMember.user} to our server! :anatomical_heart:`);
 });
 
-/*
-var emojiname = ["🎮", "🖥️", "🎵", "🎙️", "🎞️", "🎨", "✍️", "💩"],
-    rolename = ["Game Developer", "Programmer", "Musician", "Voice Actor", "Animator", "Illustrator", "Writer", "Shitposter"];
-
-client.on("messageReactionAdd", (e, user) => {
-	if (user && !user.bot && e.message.channel.guild)
-        for (let o in emojiname)
-            if (e.emoji.name == emojiname[o]) {
-                let i = e.message.guild.roles.cache.find(e => e.name == rolename[o]);
-				e.message.guild.member(user).roles.add(i).catch(console.error);
-				// console.log('added role');
-			}
-});
-
-client.on("messageReactionRemove", (e, n) => {
-    if (n && !n.bot && e.message.channel.guild)
-        for (let o in emojiname)
-            if (e.emoji.name == emojiname[o]) {
-                let i = e.message.guild.roles.cache.find(e => e.name == rolename[o]);
-				e.message.guild.member(n).roles.remove(i).catch(console.error)
-				// console.log('removed role');
-            }
-});*/
-
-
 client.on('message', message => {
 
 
@@ -57,6 +32,15 @@ client.on('message', message => {
 
     const args = message.content.slice(prefix.length).split(/ +/);
     const command = args.shift().toLowerCase();
+/*
+    if (!client.commands.has(command)) return;
+
+    try {
+		client.commands.get(command).execute(message, args);
+	} catch (error) {
+		console.error(error);
+		message.reply('There was an error trying to execute that command!');
+	}*/
 
     if (command < 1) {
         message.channel.send('You have to insert something!')
@@ -118,7 +102,7 @@ client.on('message', message => {
         client.commands.get('command').execute(message, args, Discord);
 
     } else if (command == 'whoppa') {
-        message.channel.send('DID U GET A WHOPPA? :hamburger:');
+        message.channel.send('DID U GET A WHOPPA? :hamburger:'); //what the fuck
 
     } else if (command === '') {
         client.commands.get('').execute(message.args);
@@ -211,6 +195,8 @@ client.on('message', message => {
 
     } else if (command === '.assist') {
         client.commands.get('.assist').execute(message, args)
+    } else if (command === 'rob') {
+        message.channel.send('pls rob ' + args)
     }
 });
 
