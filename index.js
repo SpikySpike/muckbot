@@ -190,12 +190,17 @@ client.on('message', message => {
             return message.channel.send("ask ur mom peasant :rofl: :point_right:")
         }
 
-    } else if (command === 'ratio') {
+    } 
+    
+    else if (command === 'ratio') {
         client.commands.get('ratio').execute(message, args, Discord, client)
-
-    } else if (command === '.assist') {
+    } 
+    
+    else if (command === '.assist') {
         client.commands.get('.assist').execute(message, args)
-    } else if (command === 'rob') {
+    } 
+    
+    else if (command === 'rob') {
         message.channel.send('pls rob ' + args)
     }
 });
