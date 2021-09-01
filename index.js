@@ -1,8 +1,9 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
-const prefix = 'pls ';
 const db = require('quick.db');
+const prefix = ['s!', 's1'];
 const fs = require('fs');
+const { string } = require('mathjs');
 const dotenv = require('dotenv').config();
 
 client.commands = new Discord.Collection();
@@ -19,10 +20,10 @@ client.once('ready', () => {
 });
 
 client.on('guildMemberAdd', guildMember => {
-    let welcomeRole = guildMember.guild.roles.cache.find(role => role.id === '863413406152785978' || '792094322484969482');
+    let welcomeRole = guildMember.guild.roles.cache.find(role => role.id === '863413406152785978' || '875685774052438037');
 
     guildMember.roles.add(welcomeRole);
-    guildMember.guild.channels.cache.get('864437914653163541' || '866954917087281182').send(`Welcome ${guildMember.user} to our server! :anatomical_heart:`);
+    guildMember.guild.channels.cache.get('864437914653163541' || '875684745151926283').send(`Welcome ${guildMember.user} to our server! :anatomical_heart:`);
 });
 
 client.on('message', message => {
@@ -104,11 +105,11 @@ client.on('message', message => {
     } else if (command == 'whoppa') {
         message.channel.send('DID U GET A WHOPPA? :hamburger:'); //what the fuck
 
-    } else if (command === '') {
-        client.commands.get('').execute(message.args);
+    } else if (command === '.') {
+        client.commands.get('.').execute(message.args);
 
-    } else if (command === '') {
-        client.commands.get('').execute(message.args);
+    } else if (command === '..') {
+        client.commands.get('..').execute(message.args);
 
     } else if (command === 'dumbrate') {
         let number = Math.floor(Math.random() * 101);

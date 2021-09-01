@@ -36,4 +36,4 @@ command
 whoppa
 
 
-All the commands yet :P
+im very lazy ass so no more commands in the list check the code
