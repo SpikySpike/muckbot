@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const db = require('quick.db');
-const prefix = ['s!', 's1'];
+const prefix = 'pls ';
 const fs = require('fs');
 const { string } = require('mathjs');
 const dotenv = require('dotenv').config();
@@ -203,6 +203,10 @@ client.on('message', message => {
     
     else if (command === 'rob') {
         message.channel.send('pls rob ' + args)
+    }
+
+    else if (command === 'google') {
+        client.commands.get('google').execute(message, args)
     }
 });
 

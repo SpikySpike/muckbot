@@ -9,7 +9,7 @@ module.exports = {
         .setDescription('Embed for rules!')
         .addFields(
             {name: 'Rule 1', value: "sub to yt ples"},
-            {name: 'Rule 2', value: "follow twitch UwU"},
+            {name: 'Rule 2', value: "follow twitch ples"},
             {name: 'Rule 3', value: "no memes in #general"},
             {name: 'Rule 4', value: "deez nuts"},
         )

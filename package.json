@@ -13,6 +13,7 @@
     "discord.js": "^12.5.3",
     "dotenv": "^10.0.0",
     "ffmpeg-static": "^4.4.0",
+    "google": "^2.1.0",
     "images-scraper": "^6.3.0",
     "mathjs": "^9.4.4",
     "mongodb": "^3.6.10",
