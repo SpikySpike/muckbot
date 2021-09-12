@@ -1,16 +1,16 @@
+var { messageEmbed } = require("discord.js");
+
 module.exports = {
     name: 'ping',
     description: "this is a ping command!",
-    execute(message, args){
-
-        if(message.member.roles.cache.has('863413406152785978')){
-            message.channel.send('pong!' + ` (${args.join(" ")})`)
-
-        } else {
-            message.channel.send("Verified succesfully! Now you have access to " + '<&863483819108466688>' + " chat! :partying_face:")
-            message.member.roles.add('863413406152785978')
-        }
-
-
+    execute(message, args, Discord){
+        const newEmbed = new Discord.messageEmbed()
+        .setColor('#eb3434')
+        .setTitle('Latency Test 🏓')
+        .setURL('https://youtu.be/dQw4w9WgXcQ')
+        .setDescription('Test Latency!')
+        .setFooter(args);
+        
+        message.channel.send(newEmbed)
     }
 }

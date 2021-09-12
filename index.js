@@ -1,9 +1,11 @@
 const Discord = require('discord.js');
+var Twitter = require('Twitter');
 const client = new Discord.Client();
 const db = require('quick.db');
-const prefix = 'pls ';
+const prefix = ('m!');
 const fs = require('fs');
 const { string } = require('mathjs');
+const tweet = require('./commands/tweet');
 const dotenv = require('dotenv').config();
 
 client.commands = new Discord.Collection();
@@ -14,16 +16,20 @@ for (const file of commandFiles) {
     client.commands.set(command.name, command);
 }
 
-
 client.once('ready', () => {
-    console.log('Muck is online!');
+    console.log('MuckBot is online!');
+    client.user.setStatus('dnd');
+    client.user.setActivity("A DSMP VIDEO 😍😍😍😍", {
+        type: "WATCHING",
+        url: "https://youtu.be/dQw4w9WgXcQ"
+      });
 });
 
 client.on('guildMemberAdd', guildMember => {
-    let welcomeRole = guildMember.guild.roles.cache.find(role => role.id === '863413406152785978' || '875685774052438037');
+    let welcomeRole = guildMember.guild.roles.cache.find(role => role.name === 'Member');
 
     guildMember.roles.add(welcomeRole);
-    guildMember.guild.channels.cache.get('864437914653163541' || '875684745151926283').send(`Welcome ${guildMember.user} to our server! :anatomical_heart:`);
+    guildMember.guild.channels.cache.get(welcomeRole).send(`Welcome ${guildMember.user} to our server! :anatomical_heart:`);
 });
 
 client.on('message', message => {
@@ -33,22 +39,13 @@ client.on('message', message => {
 
     const args = message.content.slice(prefix.length).split(/ +/);
     const command = args.shift().toLowerCase();
-/*
-    if (!client.commands.has(command)) return;
-
-    try {
-		client.commands.get(command).execute(message, args);
-	} catch (error) {
-		console.error(error);
-		message.reply('There was an error trying to execute that command!');
-	}*/
 
     if (command < 1) {
-        message.channel.send('You have to insert something!')
+        message.channel.send('You have to type something!')
     }
 
-    if (command === 'ping') {
-        client.commands.get('ping').execute(message, args);
+    if (command === 'verify') {
+        client.commands.get('verify').execute(message, args);
 
     } else if (command == 'yt') {
         message.channel.send("Check out author's channel! " + 'https://www.youtube.com/channel/UCmWj2jCeTgjTSFvqNjUDywg');
@@ -124,73 +121,15 @@ client.on('message', message => {
         }
 
     } else if (command === 'rps') {
-        if (args < 1) {
-            return message.channel.send('Please include ur choice.')
-        }
-
-        let choices = ['rock', 'paper', 'scissors']
-        if (choices.includes((args[0]).toLowerCase())) {
-            let number = Math.floor(Math.random() * 3);
-            if (number == 1) {
-                return message.channel.send(`It was a tie, we both had **${(args[0]).toLowerCase()}**`)
-            }
-            if (number == 2) {
-                if ((args[0]).toLowerCase() == "rock") {
-                    return message.channel.send('I won! I had **paper**.')
-                }
-                if ((args[0]).toLowerCase() == "paper") {
-                    return message.channel.send('I won! I had **scissors**.')
-                }
-                if ((args[0]).toLowerCase() == "scissors") {
-                    return message.channel.send('I won! I had **rock**.')
-                }
-
-            }
-            if (number == 0) {
-                if ((args[0]).toLowerCase() == "rock") {
-                    return message.channel.send('You won! I had **scissors**.')
-                }
-                if ((args[0]).toLowerCase() == "paper") {
-                    return message.channel.send('You won! I had **rock**.')
-                }
-                if ((args[0]).toLowerCase() == "scissors") {
-                    return message.channel.send('You won! I had **paper**.')
-                }
-            }
-        } else {
-            return message.channel.send('Please include either: **Rock**, **Paper** or **Scissors**.')
-        }
-    } else if (command === '.sing') {
-        client.commands.get('').execute(message, args);
-    } else if (command === 'help'){
-        message.channel.send('still being built')
-    } else if (command === '8ball') {
-        if (!args[2]){
-            return message.channel.send("Please ask something!")
-        }
-        let number = Math.floor(Math.random() * 7);
-        if (number == 0){
-            return message.channel.send("Yes, definitely so.")
-        }
-        if (number == 1){
-            return message.channel.send("No, definitely not.")
-        }
-        if (number == 2){
-            return message.channel.send("Ask again later.")
-        }
-        if (number == 3){
-            return message.channel.send("It is uncertain.")
-        }
-        if (number == 4){
-            return message.channel.send("Odds are not in your favor.")
-        }
-        if (number == 5){
-            return message.channel.send("Odds are in your favor.")
-        } 
-        if (number == 6){
-            return message.channel.send("ask ur mom peasant :rofl: :point_right:")
-        }
-
+        client.commands.get('rps').execute(message, args)
+    } 
+    
+    else if (command === 'help'){
+        message.channel.send('This bot is made with <:JsLogo:864098557954490418>! Please read our documentation here:')
+    } 
+    
+    else if (command === '8ball') {
+        client.commands.get('8ball').execute(message, args)
     } 
     
     else if (command === 'ratio') {
@@ -208,6 +147,26 @@ client.on('message', message => {
     else if (command === 'google') {
         client.commands.get('google').execute(message, args)
     }
+
+    else if (command === 'warn') {
+        client.commands.get('warn').execute(message, args)
+    } 
+    
+    else if (command === 'tweet') {
+        client.commands.get('tweet').execute(message, args, Twitter)
+    } 
+
+    else if (command === 'ping') {
+        client.commands.get('ping').execute(message, args)
+    }
 });
 
 client.login(process.env.DISCORD_TOKEN);
+
+var user = new Twitter({
+    consumer_key: process.env.TWITTER_CONSUMER_KEY,
+    consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+    access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
+    access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
+});
+
