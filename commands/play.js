@@ -8,11 +8,11 @@ module.exports = {
     async execute(message, args){
         const voiceChannel = message.member.voice.channel;
 
-        if (!voiceChannel) return message.channel.send('You need to be in a voice channel to use this command!');
+        if (!voiceChannel) return message.channel.lineReply('You need to be in a voice channel to use this command!'), message.react("❌");
         const permissions = voiceChannel.permissionsFor(message.client.user);
-        if (!permissions.has('CONNECT')) return message.channel.send("You don't have right permissions!");
-        if (!permissions.has('SPEAK')) return message.channel.send("You don't have right permissions!");
-        if (!args.length) return message.channel.send('You need to send the second argument!');
+        if (!permissions.has('CONNECT')) return message.channel.send("You don't have right permissions!"), message.react("❌");
+        if (!permissions.has('SPEAK')) return message.channel.send("You don't have right permissions!"), message.react("❌");
+        if (!args.length) return message.channel.send('You need to send the second argument!'), message.react("❌");
 
         const connection = await voiceChannel.join();
 
@@ -31,7 +31,7 @@ module.exports = {
                 voiceChannel.leave();
             });
 
-            await message.reply(`:thumbsup: Now Playing ***${video.title}*** ${video.url}`)
+            await message.lineReply(`:thumbsup: Now Playing ***${video.title}***\n ${video.url}`)
         } else {
             message.channel.send('No video results found :(')
         }
