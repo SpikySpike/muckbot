@@ -22,40 +22,12 @@ for (const file of commandFiles) {
 }
 
 client.once('ready', () => {
-    console.log('MuckBot is online!');
-    client.user.setStatus('dnd');
-    client.user.setActivity("DSMP VIDEOS 😍😍😍😍", {
-        type: "WATCHING",
+    console.log(`${client.user.tag} is online!`);
+    client.user.setStatus('idle');
+    client.user.setActivity("league of LEGENDS! (lol)", {
+        type: "COMPETING",
         url: "https://youtu.be/dQw4w9WgXcQ"
     });
-});
-
-client.on('interactionCreate', async interaction => {
-	if (!interaction.isCommand()) return;
-
-	if (interaction.command === 'react-await') {
-		const message = await interaction.reply('Awaiting emojis...', { fetchReply: true });
-		message.react('👍').then(() => message.react('👎'));
-
-		const filter = (reaction, user) => {
-			return ['👍', '👎'].includes(reaction.emoji.name) && user.id === interaction.user.id;
-		};
-
-		message.awaitReactions({ filter, max: 1, time: 60000, errors: ['time'] })
-			.then(collected => {
-				const reaction = collected.first();
-
-				if (reaction.emoji.name === '👍') {
-					interaction.followUp('You reacted with a thumbs up.');
-				} else {
-					interaction.followUp('You reacted with a thumbs down.');
-				}
-			})
-			.catch(collected => {
-				console.log(`After a minute, only ${collected.size} out of 4 reacted.`);
-				interaction.followUp('You didn\'t react with neither a thumbs up, nor a thumbs down.');
-			});
-	}
 });
 
 client.on('guildMemberAdd', guildMember => {
@@ -117,7 +89,7 @@ client.on('message', message => {
         client.commands.get('image').execute(message, args);
 
     } else if (command === 'play') {
-        client.commands.get('play').execute(message, args);
+        client.commands.get('play').execute(message, args, Discord);
 
     } else if (command === 'leave') {
         client.commands.get('leave').execute(message, args);
@@ -127,10 +99,7 @@ client.on('message', message => {
         message.react("😢"); //Turns off the bot.
         process.exit(1);
 
-    } else if (command == 'say2') {
-        message.lineReply(args.join(' '));
-
-    } else if (command === 'clear') {
+    }  else if (command === 'clear') {
         client.commands.get('clear').execute(message, args);
 
     } else if (command === 'command') {
@@ -145,7 +114,7 @@ client.on('message', message => {
     } else if (command === '..') {
         client.commands.get('..').execute(message.args);
 
-    } else if (command === 'dumbrate') {
+    } else if (command === 'dumbrate' || 'dumbr8') {
         let number = Math.floor(Math.random() * 101);
         if (!args[1]) {
             return message.lineReply('You are ' + number + '% dumb :face_with_monocle:');
@@ -230,7 +199,7 @@ client.on('message', message => {
         game.handleMessage(message);
     }
 
-    else if (command == 'github') {
+    else if (command == 'github' || 'gh') {
         message.lineReply('https://github/' + args);
         message.react("<:GitHub:864099758779924480>")
     }
@@ -259,8 +228,19 @@ client.on('message', message => {
             .then((msg) => {
                 setTimeout(function () {
                     msg.edit('IT FINALLY PINGED WOO @everyone');
+                    message.channel.send('@everyone')
                 }, 100000)
             });
+    }
+
+    else if (command == '') {
+        message.lineReplyNoMention("Like this bot? 😉");
+        sentMessage.react('👍');
+        sentMessage.react('👎');
+    }
+
+    else if (command == 'websocket' || 'ws') {
+        message.lineReply(`Websocket heartbeat: ${client.ws.ping}ms.`);
     }
 });
 

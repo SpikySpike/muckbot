@@ -5,14 +5,14 @@ const yts = require('yt-search');
 module.exports = {
     name: 'play',
     description: 'Joins and plays a video from YouTube',
-    async execute(message, args){
+    async execute(message, args, Discord) {
         const voiceChannel = message.member.voice.channel;
 
-        if (!voiceChannel) return message.channel.lineReply('You need to be in a voice channel to use this command!'), message.react("❌");
+        if (!voiceChannel) return message.lineReply('You need to be in a voice channel to use this command!'), message.react("❌");
         const permissions = voiceChannel.permissionsFor(message.client.user);
-        if (!permissions.has('CONNECT')) return message.channel.send("You don't have right permissions!"), message.react("❌");
-        if (!permissions.has('SPEAK')) return message.channel.send("You don't have right permissions!"), message.react("❌");
-        if (!args.length) return message.channel.send('You need to send the second argument!'), message.react("❌");
+        if (!permissions.has('CONNECT')) return message.lineReply("You can't connect to this channel!"), message.react("❌");
+        if (!permissions.has('SPEAK')) return message.lineReply("You can't speak in this channel!"), message.react("❌");
+        if (!args.length) return message.lineReply('You need to send the second argument!'), message.react("❌");
 
         const connection = await voiceChannel.join();
 
@@ -24,16 +24,25 @@ module.exports = {
 
         const video = await videoFinder(args.join(' '));
 
-        if(video){
-            const stream = ytdl(video.url, {filter: 'audioonly'});
-            connection.play(stream, {seek: 0, volume: 1})
-            .on('finish', () =>{
-                voiceChannel.leave();
-            });
+        if (video) {
+            const stream = ytdl(video.url, { filter: 'audioonly' });
+            connection.play(stream, { seek: 0, volume: 1 })
+                .on('finish', () => {
+                    voiceChannel.leave();
+                });
 
-            await message.lineReply(`:thumbsup: Now Playing ***${video.title}***\n ${video.url}`)
+            const videoEmbed = new Discord.MessageEmbed()
+                .setColor('RANDOM')
+                .setTitle('🎶 Now playing...')
+                .setURL(video.url)
+                .setDescription(video.title)
+                .setImage(video.thumbnail)
+                .setTimestamp()
+                .setFooter('**YouTube**');
+
+            await message.lineReply(videoEmbed)
         } else {
-            message.channel.send('No video results found :(')
+            message.lineReply('No video results found :(')
         }
     }
 }
