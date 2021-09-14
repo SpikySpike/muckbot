@@ -10,6 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "@discordjs/opus": "^0.5.3",
+    "@discordjs/rest": "0.1.0-canary.0",
+    "discord-api-types": "^0.23.1",
     "discord-minigames": "^1.2.2",
     "discord-reply": "^0.1.2",
     "discord-tictactoe": "^2.1.1",
