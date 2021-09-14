@@ -2,19 +2,19 @@ module.exports = {
     name: 'command',
     description: "Embeds!",
     execute(message, args, Discord){
+        args.join(" ");
         const newEmbed = new Discord.MessageEmbed()
-        .setColor('#B6FCD5')
-        .setTitle('Rules')
+        .setColor('#ffffff')
+        .setTitle(args)
         .setURL('https://www.youtube.com/channel/UCmWj2jCeTgjTSFvqNjUDywg')
-        .setDescription('Embed for rules!')
+        .setDescription(args)
         .addFields(
-            {name: 'Rule 1', value: "sub to yt ples"},
-            {name: 'Rule 2', value: "follow twitch ples"},
-            {name: 'Rule 3', value: "no memes in #general"},
-            {name: 'Rule 4', value: "deez nuts"},
+            {name: args, value: args},
+            {name: args, value: args},
+            {name: args, value: args},
+            {name: args, value: args},
         )
-        .setImage('https://tenor.com/view/twitter-users-twitter-twitter-account-waiting-for-memes-twitter-users-are-monkeys-gif-19091814')
-        .setFooter("Make sure to check out the rules!!!!!");
+        .setFooter(args)
         
         message.channel.send(newEmbed)
     }

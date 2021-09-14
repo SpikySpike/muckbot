@@ -5,9 +5,13 @@ const client = new Discord.Client();
 const db = require('quick.db');
 const prefix = ('m!');
 const fs = require('fs');
+const minigames = require('discord-minigames');
+const { GuildMember, Message } = require('discord.js');
+const TicTacToe = require('discord-tictactoe');
 const { string } = require('mathjs');
 const tweet = require('./commands/tweet');
 const dotenv = require('dotenv').config();
+const game = new TicTacToe({ language: 'en' });
 
 client.commands = new Discord.Collection();
 const commandFiles = fs.readdirSync('./commands/').filter(file => file.endsWith('.js'));
@@ -20,10 +24,10 @@ for (const file of commandFiles) {
 client.once('ready', () => {
     console.log('MuckBot is online!');
     client.user.setStatus('dnd');
-    client.user.setActivity("A DSMP VIDEO 😍😍😍😍", {
+    client.user.setActivity("DSMP VIDEOS 😍😍😍😍", {
         type: "WATCHING",
         url: "https://youtu.be/dQw4w9WgXcQ"
-      });
+    });
 });
 
 client.on('guildMemberAdd', guildMember => {
@@ -42,7 +46,7 @@ client.on('message', message => {
     const command = args.shift().toLowerCase();
 
     if (command < 1) {
-        message.lineReply('You have to type something!')
+        message.lineReply('You have to type something!');
     }
 
     if (command === 'verify') {
@@ -58,7 +62,7 @@ client.on('message', message => {
         message.lineReply('https://tenor.com/view/dance-moves-dancing-singer-groovy-gif-17029825 ' + args);
 
     } else if (command == 'say') {
-        message.channel.send(`<@${message.author.id}> said ${args.join(' ')}`);
+        message.lineReplyNoMention(`<@${message.author.id}> said ${args.join(' ')}`);
 
     } else if (command == 'spoiler') {
         message.lineReply('||' + args + '||');
@@ -70,13 +74,16 @@ client.on('message', message => {
         client.commands.get('ban').execute(message, args);
 
     } else if (command == 'twitter') {
-        message.lineReply('https://twitter.com/' + args + " follow them! :rocket:");
+        message.lineReply('https://twitter.com/' + args);
+        message.react("<:twitterlogo:883038337731010680>");
 
     } else if (command == 'reddit') {
-        message.lineReply('https://www.reddit.com/' + args + " go check this out! :flying_saucer:");
+        message.lineReply('https://www.reddit.com/' + args);
+        message.react("<:reddit:887361210692026418>");
 
     } else if (command == 'youtube') {
         message.lineReply('https://www.youtube.com/' + args + " go check this out!");
+        message.react("<:youtube:887361211031748719>");
 
     } else if (command === 'image') {
         client.commands.get('image').execute(message, args);
@@ -124,24 +131,24 @@ client.on('message', message => {
 
     } else if (command === 'rps') {
         client.commands.get('rps').execute(message, args)
-    } 
-    
-    else if (command === 'help'){
+    }
+
+    else if (command === 'help') {
         message.lineReply('This bot is made with <:JsLogo:864098557954490418>! Please read our documentation here:')
-    } 
-    
+    }
+
     else if (command === '8ball') {
         client.commands.get('8ball').execute(message, args)
-    } 
-    
+    }
+
     else if (command === 'ratio') {
         client.commands.get('ratio').execute(message, args, Discord, client)
-    } 
-    
+    }
+
     else if (command === '.assist') {
         client.commands.get('.assist').execute(message, args)
-    } 
-    
+    }
+
     else if (command === 'rob') {
         message.lineReply('pls rob ' + args)
     }
@@ -152,19 +159,52 @@ client.on('message', message => {
 
     else if (command === 'warn') {
         client.commands.get('warn').execute(message, args)
-    } 
-    
+    }
+
     else if (command === 'tweet') {
         client.commands.get('tweet').execute(message, args, Twitter)
-    } 
+    }
 
     else if (command === 'ping') {
         client.commands.get('ping').execute(message, args, Discord)
-    } 
+    }
 
     else if (command === 'react') {
         message.react(`<@${args}>`);
         message.lineReply('Success! ❤')
+    }
+
+    else if (command === 'thread') {
+        client.commands.get('thread').execute(message, args, Discord)
+    }
+
+    else if (command === 'version') {
+        message.lineReply(`MuckBot 2021 © \nVersion: 1.0.0 unreleased`)
+    }
+
+    else if (command === 'info') {
+        message.lineReplyNoMention('**Info** \nThis bot was created by SpikySpike#5298. The work started at July 2021. \nThe bot is not yet released.')
+    }
+
+    else if (command === 'battle') {
+        minigames.startBattle(GuildMember, Message)
+    }
+
+    else if (message.content.startsWith() === `${prefix}ispy` && member) {
+        let ISpy = new minigames.ISpy(message)
+        ISpy.startISpy(member).catch(err => {
+            console.log(err)
+            message.channel.send(err.message)
+        })
+    }
+
+    else if (command === 'ttt') {
+        game.handleMessage(message);
+    }
+
+    else if (command == 'github') {
+        message.lineReply('https://github/' + args);
+        message.react("<:GitHub:864099758779924480>")
     }
 });
 

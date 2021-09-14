@@ -10,7 +10,9 @@
   "license": "ISC",
   "dependencies": {
     "@discordjs/opus": "^0.5.3",
+    "discord-minigames": "^1.2.2",
     "discord-reply": "^0.1.2",
+    "discord-tictactoe": "^2.1.1",
     "discord.js": "^12.5.3",
     "dotenv": "^10.0.0",
     "ffmpeg-static": "^4.4.0",
