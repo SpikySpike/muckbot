@@ -12,6 +12,7 @@ const { string } = require('mathjs');
 const tweet = require('./commands/tweet');
 const dotenv = require('dotenv').config();
 const game = new TicTacToe({ language: 'en' });
+const { balances } = require("./balances.json");
 
 client.commands = new Discord.Collection();
 const commandFiles = fs.readdirSync('./commands/').filter(file => file.endsWith('.js'));
@@ -56,8 +57,8 @@ client.on('message', message => {
         message.lineReply("Check out author's channel! " + 'https://www.youtube.com/channel/UCmWj2jCeTgjTSFvqNjUDywg');
 
     } else if (command == 'hello') {
-        message.lineReply('Hello ' + '@' + message.author.username + message.author.tag + '!');
-
+        message.lineReply('Hello ' + '@' + message.author.username + message.author.tag + '!'); 
+    
     } else if (command == 'admin') {
         message.lineReply('https://tenor.com/view/dance-moves-dancing-singer-groovy-gif-17029825 ' + args);
 
@@ -86,7 +87,7 @@ client.on('message', message => {
         message.react("<:youtube:887361211031748719>");
 
     } else if (command === 'image') {
-        client.commands.get('image').execute(message, args);
+        client.commands.get('').execute(message, args);
 
     } else if (command === 'play') {
         client.commands.get('play').execute(message, args, Discord);
@@ -114,17 +115,8 @@ client.on('message', message => {
     } else if (command === '..') {
         client.commands.get('..').execute(message.args);
 
-    } else if (command === 'dumbrate' || 'dumbr8') {
-        let number = Math.floor(Math.random() * 101);
-        if (!args[1]) {
-            return message.lineReply('You are ' + number + '% dumb :face_with_monocle:');
-        } else {
-            let user = message.mentions.user.first();
-            if (!user) {
-                return message.lineReply('Please include who you are dumb-rating.')
-            }
-            return message.lineReply(user.username + 'is' + number + '% dumb :face_with_monocle:')
-        }
+    } else if (command === 'dumbrate') {
+        client.commands.get('dumbrate').execute(message, args, Math)
 
     } else if (command === 'rps') {
         client.commands.get('rps').execute(message, args)
@@ -176,7 +168,7 @@ client.on('message', message => {
     }
 
     else if (command === 'version') {
-        message.lineReply(`MuckBot 2021 © \nVersion: 1.0.0 unreleased`)
+        message.lineReply(`MuckBot 2021 © \nVersion: 0.9.0 unreleased`)
     }
 
     else if (command === 'info') {
@@ -199,7 +191,7 @@ client.on('message', message => {
         game.handleMessage(message);
     }
 
-    else if (command == 'github' || 'gh') {
+    else if (command == 'github') {
         message.lineReply('https://github/' + args);
         message.react("<:GitHub:864099758779924480>")
     }
@@ -239,12 +231,90 @@ client.on('message', message => {
         sentMessage.react('👎');
     }
 
-    else if (command == 'websocket' || 'ws') {
-        message.lineReply(`Websocket heartbeat: ${client.ws.ping}ms.`);
+    else if (command === "casino") {
+        if (!args[0]) {
+            message.lineReply("Enter the bet, please!");
+            message.react('❌');
+            return;
+        }
+
+        var bet = args[0]
+        
+        if (bet < 50) {
+            message.lineReply("Minimum bet is 50");
+            message.react('❌');
+            return;
+        }
+
+        /* else if (bet > balances[message.author.toString()]) {
+            message.lineReply("You can't bet more than you have");
+            message.react('❌');
+            return;
+        } */
+
+        var multiplier;
+
+        var colors = ["red", "blue", "green"];
+        var guess = colors[Math.floor(Math.random() * colors.length)];
+
+        var chances = ["red", "red", "red", "red", "red", "red",
+         "red", "red", "red", "red", "red", "red", "blue", "blue", "blue", "blue", "blue", "blue", "blue", "blue", "blue", "blue", "blue", "blue",
+        "green"]; // 
+
+        var index = Math.floor(Math.random * colors.length);
+
+        if (chances[index] === guess) {
+            if (guess === "green") {
+                multiplier = 30;
+            }
+
+            else {
+                multiplier = 2;
+            }
+        }
+        
+        else {
+            multiplier = -1;
+        }
+        
+        if (multiplier < 0) {
+            message.lineReply(`You lost ${bet}$!`);
+            message.author.balance -= bet;
+            message.react('💸');
+        }
+        else {
+            message.lineReply(`You won ${bet * (multiplier - 1)}`);
+            message.react('💲')
+        }
+    }
+
+    else if (command == 'priv') {
+        //Interaction.reply({ephemeral: true}) 
+    }
+
+    else if (command == 'guess-game') {
+        var vars = ['car', 'house', 'cat', 'fish']
+        
+        var guess = vars[Math.floor(Math.random() * vars)]
+
+        if (!args[0]) {
+            message.lineReply('Argument needed!');
+        } 
+        
+        else if ((args[0]).toLowerCase() = 'cat') {
+            //cant code wow
+            
+        }
     }
 });
 
-client.login(process.env.DISCORD_TOKEN);
+client.login(process.env.DISCORD_TOKEN); 
+
+/*
+win + r: cmd
+shutdown /s 
+*/ 
+
 
 var user = new Twitter({
     consumer_key: process.env.TWITTER_CONSUMER_KEY,

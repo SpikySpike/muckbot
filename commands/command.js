@@ -3,7 +3,7 @@ module.exports = {
     description: "Embeds!",
     execute(message, args, Discord){
         args.join(" ");
-        const newEmbed = new Discord.MessageEmbed()
+        const testEmbed = new Discord.MessageEmbed()
         .setColor('#ffffff')
         .setTitle(args)
         .setURL('https://www.youtube.com/channel/UCmWj2jCeTgjTSFvqNjUDywg')
@@ -16,6 +16,6 @@ module.exports = {
         )
         .setFooter(args)
         
-        message.channel.send(newEmbed)
+        message.channel.send(testEmbed)
     }
 }
