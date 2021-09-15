@@ -38,7 +38,7 @@ module.exports = {
                 .setDescription(video.title)
                 .setImage(video.thumbnail)
                 .setTimestamp()
-                .setFooter('YouTube');
+                .setFooter(`Duration: ${video.duration}`);
 
             await message.lineReply(videoEmbed)
         } else {

@@ -21,10 +21,19 @@ for (const file of commandFiles) {
 
     client.commands.set(command.name, command);
 }
+//tried
+/*
+client.MessageEmbed = new Discord.Collection();
+const Embeds = fs.readdirSync('./embeds/').filter(file => file.endsWith('.js'));
+for (const file of Embeds) {
+    const MessageEmbed = require(`./embeds/${file}`);
+
+    client.MessageEmbed.set(MessageEmbed.name, MessageEmbed);
+}*/
 
 client.once('ready', () => {
     console.log(`${client.user.tag} is online!`);
-    client.user.setStatus('idle');
+    client.user.setStatus('invisible');
     client.user.setActivity("league of LEGENDS! (lol)", {
         type: "COMPETING",
         url: "https://youtu.be/dQw4w9WgXcQ"
@@ -87,7 +96,7 @@ client.on('message', message => {
         message.react("<:youtube:887361211031748719>");
 
     } else if (command === 'image') {
-        client.commands.get('').execute(message, args);
+        client.commands.get('image').execute(message, args);
 
     } else if (command === 'play') {
         client.commands.get('play').execute(message, args, Discord);
@@ -116,7 +125,7 @@ client.on('message', message => {
         client.commands.get('..').execute(message.args);
 
     } else if (command === 'dumbrate') {
-        client.commands.get('dumbrate').execute(message, args, Math)
+        client.commands.get('dumbrate').execute(message, args, Math, Discord)
 
     } else if (command === 'rps') {
         client.commands.get('rps').execute(message, args)
@@ -232,60 +241,7 @@ client.on('message', message => {
     }
 
     else if (command === "casino") {
-        if (!args[0]) {
-            message.lineReply("Enter the bet, please!");
-            message.react('❌');
-            return;
-        }
-
-        var bet = args[0]
-        
-        if (bet < 50) {
-            message.lineReply("Minimum bet is 50");
-            message.react('❌');
-            return;
-        }
-
-        /* else if (bet > balances[message.author.toString()]) {
-            message.lineReply("You can't bet more than you have");
-            message.react('❌');
-            return;
-        } */
-
-        var multiplier;
-
-        var colors = ["red", "blue", "green"];
-        var guess = colors[Math.floor(Math.random() * colors.length)];
-
-        var chances = ["red", "red", "red", "red", "red", "red",
-         "red", "red", "red", "red", "red", "red", "blue", "blue", "blue", "blue", "blue", "blue", "blue", "blue", "blue", "blue", "blue", "blue",
-        "green"]; // 
-
-        var index = Math.floor(Math.random * colors.length);
-
-        if (chances[index] === guess) {
-            if (guess === "green") {
-                multiplier = 30;
-            }
-
-            else {
-                multiplier = 2;
-            }
-        }
-        
-        else {
-            multiplier = -1;
-        }
-        
-        if (multiplier < 0) {
-            message.lineReply(`You lost ${bet}$!`);
-            message.author.balance -= bet;
-            message.react('💸');
-        }
-        else {
-            message.lineReply(`You won ${bet * (multiplier - 1)}`);
-            message.react('💲')
-        }
+        client.commands.get('casino').execute(message, args)
     }
 
     else if (command == 'priv') {
@@ -305,6 +261,10 @@ client.on('message', message => {
             //cant code wow
             
         }
+    }
+
+    else if (command === 'robux') {
+        client.commands.get('robux').execute(message, args, Discord)
     }
 });
 
