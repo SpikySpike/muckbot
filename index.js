@@ -1,7 +1,8 @@
 const Discord = require('discord.js');
+const { Client, Intents } = require('discord.js');
 var Twitter = require('Twitter');
 require('discord-reply');
-const client = new Discord.Client();
+const client = new Discord.Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 const db = require('quick.db');
 const prefix = ('m!');
 const fs = require('fs');
@@ -31,7 +32,7 @@ for (const file of Embeds) {
     client.MessageEmbed.set(MessageEmbed.name, MessageEmbed);
 }*/
 
-client.once('ready', () => {
+client.on('ready', () => {
     console.log(`${client.user.tag} is online!`);
     client.user.setStatus('invisible');
     client.user.setActivity("league of LEGENDS! (lol)", {
@@ -245,7 +246,7 @@ client.on('message', message => {
     }
 
     else if (command == 'priv') {
-        //Interaction.reply({ephemeral: true}) 
+        //Interaction.reply({ephemeral: true})
     }
 
     else if (command == 'guess-game') {
