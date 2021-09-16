@@ -1,5 +1,9 @@
 const Discord = require('discord.js');
 const { Client, Intents } = require('discord.js');
+const { SlashCommandBuilder } = require('@discordjs/builders');
+require('@discordjs/voice');
+const { REST } = require('@discordjs/rest');
+const { Routes } = require('discord-api-types/v9');
 var Twitter = require('Twitter');
 require('discord-reply');
 const client = new Discord.Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
@@ -22,24 +26,43 @@ for (const file of commandFiles) {
 
     client.commands.set(command.name, command);
 }
-//tried
-/*
-client.MessageEmbed = new Discord.Collection();
-const Embeds = fs.readdirSync('./embeds/').filter(file => file.endsWith('.js'));
-for (const file of Embeds) {
-    const MessageEmbed = require(`./embeds/${file}`);
 
-    client.MessageEmbed.set(MessageEmbed.name, MessageEmbed);
-}*/
+const clientId = '863088704296845312';
+const guildId = '875684744690532402';
+
+const rest = new REST({ version: '9' }).setToken(process.env.DISCORD_TOKEN);
+
+(async () => {
+	try {
+		console.log('Started refreshing application (/) commands.');
+
+		await rest.put(
+			Routes.applicationGuildCommands(clientId, guildId),
+			{ body: commands },
+		);
+
+		console.log('Successfully reloaded application (/) commands.');
+	} catch (error) {
+		console.error(error);
+	}
+})();
 
 client.on('ready', () => {
     console.log(`${client.user.tag} is online!`);
-    client.user.setStatus('invisible');
+    client.user.setStatus('idle');
     client.user.setActivity("league of LEGENDS! (lol)", {
         type: "COMPETING",
         url: "https://youtu.be/dQw4w9WgXcQ"
     });
 });
+
+const data = new SlashCommandBuilder()
+	.setName('echo')
+	.setDescription('Replies with your input!')
+	.addStringOption(option =>
+		option.setName('input')
+			.setDescription('The input to echo back')
+			.setRequired(true));
 
 client.on('guildMemberAdd', guildMember => {
     let welcomeRole = guildMember.guild.roles.cache.find(role => role.name === 'Member');
@@ -57,26 +80,26 @@ client.on('message', message => {
     const command = args.shift().toLowerCase();
 
     if (command < 1) {
-        message.lineReply('You have to type something!');
+        message.reply('You have to type something!');
     }
 
     if (command === 'verify') {
         client.commands.get('verify').execute(message, args);
 
     } else if (command == 'yt') {
-        message.lineReply("Check out author's channel! " + 'https://www.youtube.com/channel/UCmWj2jCeTgjTSFvqNjUDywg');
+        message.reply("Check out author's channel! " + 'https://www.youtube.com/channel/UCmWj2jCeTgjTSFvqNjUDywg');
 
     } else if (command == 'hello') {
-        message.lineReply('Hello ' + '@' + message.author.username + message.author.tag + '!'); 
+        message.reply('Hello ' + `<@${message.author.id}>` + '!'); 
     
     } else if (command == 'admin') {
-        message.lineReply('https://tenor.com/view/dance-moves-dancing-singer-groovy-gif-17029825 ' + args);
+        message.reply('https://tenor.com/view/dance-moves-dancing-singer-groovy-gif-17029825 ' + args);
 
     } else if (command == 'say') {
-        message.lineReplyNoMention(`<@${message.author.id}> said ${args.join(' ')}`);
+        message.reply(`<@${message.author.id}> said ${args.join(' ')}`);
 
     } else if (command == 'spoiler') {
-        message.lineReply('||' + args + '||');
+        message.reply('||' + args.join(" ") + '||');
 
     } else if (command === 'kick') {
         client.commands.get('kick').execute(message, args);
@@ -85,15 +108,15 @@ client.on('message', message => {
         client.commands.get('ban').execute(message, args);
 
     } else if (command == 'twitter') {
-        message.lineReply('https://twitter.com/' + args);
+        message.reply('https://twitter.com/' + args);
         message.react("<:twitterlogo:883038337731010680>");
 
     } else if (command == 'reddit') {
-        message.lineReply('https://www.reddit.com/' + args);
+        message.reply('https://www.reddit.com/' + args);
         message.react("<:reddit:887361210692026418>");
 
     } else if (command == 'youtube') {
-        message.lineReply('https://www.youtube.com/' + args + " go check this out!");
+        message.reply('https://www.youtube.com/' + args + " go check this out!");
         message.react("<:youtube:887361211031748719>");
 
     } else if (command === 'image') {
@@ -106,9 +129,18 @@ client.on('message', message => {
         client.commands.get('leave').execute(message, args);
 
     } else if (command === 'turnoff') {
-        message.lineReply('Goodbye! :heart:');
-        message.react("😢"); //Turns off the bot.
-        process.exit(1);
+        if (args == 'what you know about rolling down in the deep') {
+            message.reply('Goodbye! 💔');
+            message.react('😢');
+            setTimeout(function(){ 
+                process.exit(); 
+            }, 3000);
+        }
+
+        else {
+            message.reply('Enter the password!');
+            message.react('❌');
+        }
 
     }  else if (command === 'clear') {
         client.commands.get('clear').execute(message, args);
@@ -117,7 +149,7 @@ client.on('message', message => {
         client.commands.get('command').execute(message, args, Discord);
 
     } else if (command == 'whoppa') {
-        message.lineReply('DID U GET A WHOPPA? :hamburger:'); //what the fuck
+        message.reply('DID U GET A WHOPPA? :hamburger:'); 
 
     } else if (command === '.') {
         client.commands.get('.').execute(message.args);
@@ -133,7 +165,7 @@ client.on('message', message => {
     }
 
     else if (command === 'help') {
-        message.lineReply('This bot is made with <:JsLogo:864098557954490418>! Please read our documentation here:')
+        message.reply('This bot is made with <:JsLogo:864098557954490418>! Please read our documentation here:')
     }
 
     else if (command === '8ball') {
@@ -149,7 +181,7 @@ client.on('message', message => {
     }
 
     else if (command === 'rob') {
-        message.lineReply('pls rob ' + args)
+        message.reply('pls rob ' + args)
     }
 
     else if (command === 'google') {
@@ -170,7 +202,7 @@ client.on('message', message => {
 
     else if (command === 'react') {
         message.react(`<@${args}>`);
-        message.lineReply('Success! ❤')
+        message.reply('Success! ❤')
     }
 
     else if (command === 'thread') {
@@ -178,11 +210,11 @@ client.on('message', message => {
     }
 
     else if (command === 'version') {
-        message.lineReply(`MuckBot 2021 © \nVersion: 0.9.0 unreleased`)
+        message.reply(`MuckBot 2021 © \nVersion: 0.9.0 unreleased`)
     }
 
     else if (command === 'info') {
-        message.lineReplyNoMention('**Info** \nThis bot was created by SpikySpike#5298. The work started at July 2021. \nThe bot is not yet released.')
+        message.reply('**Info** \nThis bot was created by SpikySpike#5298. The work started at July 2021. \nThe bot is not yet released.')
     }
 
     else if (command === 'battle') {
@@ -202,7 +234,7 @@ client.on('message', message => {
     }
 
     else if (command == 'github') {
-        message.lineReply('https://github/' + args);
+        message.reply('https://github/' + args);
         message.react("<:GitHub:864099758779924480>")
     }
 
@@ -226,7 +258,7 @@ client.on('message', message => {
     }
 
     else if (command == 'edit') {
-        message.lineReply('hello')
+        message.reply('hello')
             .then((msg) => {
                 setTimeout(function () {
                     msg.edit('IT FINALLY PINGED WOO @everyone');
@@ -236,7 +268,7 @@ client.on('message', message => {
     }
 
     else if (command == '') {
-        message.lineReplyNoMention("Like this bot? 😉");
+        message.reply("Like this bot? 😉");
         sentMessage.react('👍');
         sentMessage.react('👎');
     }
@@ -255,7 +287,7 @@ client.on('message', message => {
         var guess = vars[Math.floor(Math.random() * vars)]
 
         if (!args[0]) {
-            message.lineReply('Argument needed!');
+            message.reply('Argument needed!');
         } 
         
         else if ((args[0]).toLowerCase() = 'cat') {

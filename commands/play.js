@@ -1,3 +1,4 @@
+const { joinVoiceChannel } = require('@discordjs/voice');
 const ytdl = require('ytdl-core');
 const ytSearch = require('yt-search');
 const yts = require('yt-search');
@@ -8,13 +9,17 @@ module.exports = {
     async execute(message, args, Discord) {
         const voiceChannel = message.member.voice.channel;
 
-        if (!voiceChannel) return message.lineReply('You need to be in a voice channel to use this command!'), message.react("❌");
+        if (!voiceChannel) return message.reply('You need to be in a voice channel to use this command!'), message.react("❌");
         const permissions = voiceChannel.permissionsFor(message.client.user);
-        if (!permissions.has('CONNECT')) return message.lineReply("You can't connect to this channel!"), message.react("❌");
-        if (!permissions.has('SPEAK')) return message.lineReply("You can't speak in this channel!"), message.react("❌");
-        if (!args.length) return message.lineReply('You need to send the second argument!'), message.react("❌");
+        if (!permissions.has('CONNECT')) return message.reply("You can't connect to this channel!"), message.react("❌");
+        if (!permissions.has('SPEAK')) return message.reply("You can't speak in this channel!"), message.react("❌");
+        if (!args.length) return message.reply('You need to send the second argument!'), message.react("❌");
 
-        const connection = await voiceChannel.join();
+        const connection = await joinVoiceChannel({
+            channelId: message.member.voice.channel.id,
+            guildId: message.guild.id,
+            adapterCreator: message.guild.voiceAdapterCreator
+        })
 
         const videoFinder = async (query) => {
             const videoResult = await ytSearch(query);
@@ -38,11 +43,11 @@ module.exports = {
                 .setDescription(video.title)
                 .setImage(video.thumbnail)
                 .setTimestamp()
-                .setFooter(`${video.duration}`);
+                .setFooter(video.duration);
 
-            await message.lineReply(videoEmbed)
+            await message.reply({ embeds: [videoEmbed] });
         } else {
-            message.lineReply('No video results found :(')
+            message.reply('No video results found :(')
         }
     }
 }

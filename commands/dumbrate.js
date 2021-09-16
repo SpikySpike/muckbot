@@ -5,7 +5,7 @@ module.exports = {
         const dumbEmbed = new Discord.MessageEmbed()
         .setColor('RANDOM')
         .setTitle('dumbr8 machine')
-        .setDescription('You are' + number + '% dumb.')
+        .setDescription('You are ' + number + '% dumb.')
 
         const dumbEmbed2 = new Discord.MessageEmbed()
         .setColor('RANDOM')
@@ -14,11 +14,11 @@ module.exports = {
 
         let number = Math.floor(Math.random() * 101);
         if (!args[1]) {
-            return message.lineReply(dumbEmbed);
+            return message.lineReply({ embeds: dumbEmbed});
         } else if (args[1]) {
             let user = message.mentions.user.first();
             if (user) {
-                message.lineReply(dumbEmbed2)
+                message.lineReply({ embeds: dumbEmbed2});
             }
         }
     }
