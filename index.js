@@ -8,7 +8,7 @@ var Twitter = require('Twitter');
 require('discord-reply');
 const client = new Discord.Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 const db = require('quick.db');
-const prefix = ('m!');
+const prefix = "m!";
 const fs = require('fs');
 const minigames = require('discord-minigames');
 const { GuildMember, Message } = require('discord.js');
@@ -27,26 +27,6 @@ for (const file of commandFiles) {
     client.commands.set(command.name, command);
 }
 
-const clientId = '863088704296845312';
-const guildId = '875684744690532402';
-
-const rest = new REST({ version: '9' }).setToken(process.env.DISCORD_TOKEN);
-
-(async () => {
-	try {
-		console.log('Started refreshing application (/) commands.');
-
-		await rest.put(
-			Routes.applicationGuildCommands(clientId, guildId),
-			{ body: commands },
-		);
-
-		console.log('Successfully reloaded application (/) commands.');
-	} catch (error) {
-		console.error(error);
-	}
-})();
-
 client.on('ready', () => {
     console.log(`${client.user.tag} is online!`);
     client.user.setStatus('idle');
@@ -57,18 +37,18 @@ client.on('ready', () => {
 });
 
 const data = new SlashCommandBuilder()
-	.setName('echo')
-	.setDescription('Replies with your input!')
-	.addStringOption(option =>
-		option.setName('input')
-			.setDescription('The input to echo back')
-			.setRequired(true));
+    .setName('echo')
+    .setDescription('Replies with your input!')
+    .addStringOption(option =>
+        option.setName('input')
+            .setDescription('The input to echo back')
+            .setRequired(true));
 
 client.on('guildMemberAdd', guildMember => {
     let welcomeRole = guildMember.guild.roles.cache.find(role => role.name === 'Member');
 
     guildMember.roles.add(welcomeRole);
-    guildMember.guild.channels.cache.get(welcomeRole).send(`Welcome ${guildMember.user} to our server! :anatomical_heart:`);
+    guildMember.guild.channels.cache.get(channel => channel.name === "welcome").send(`Welcome ${guildMember.user} to our server! :anatomical_heart:`);
 });
 
 client.on('message', message => {
@@ -90,13 +70,13 @@ client.on('message', message => {
         message.reply("Check out author's channel! " + 'https://www.youtube.com/channel/UCmWj2jCeTgjTSFvqNjUDywg');
 
     } else if (command == 'hello') {
-        message.reply('Hello ' + `<@${message.author.id}>` + '!'); 
-    
+        message.reply('Hello ' + `<@${message.author.id}>` + '!');
+
     } else if (command == 'admin') {
         message.reply('https://tenor.com/view/dance-moves-dancing-singer-groovy-gif-17029825 ' + args);
 
     } else if (command == 'say') {
-        message.reply(`<@${message.author.id}> said ${args.join(' ')}`);
+        message.channel.send(`${args}\n\n          - **${message.author.username}**`);
 
     } else if (command == 'spoiler') {
         message.reply('||' + args.join(" ") + '||');
@@ -129,11 +109,11 @@ client.on('message', message => {
         client.commands.get('leave').execute(message, args);
 
     } else if (command === 'turnoff') {
-        if (args == 'what you know about rolling down in the deep') {
+        if (args.join(" ") == password) {
             message.reply('Goodbye! 💔');
             message.react('😢');
-            setTimeout(function(){ 
-                process.exit(); 
+            setTimeout(function () {
+                process.exit();
             }, 3000);
         }
 
@@ -142,14 +122,14 @@ client.on('message', message => {
             message.react('❌');
         }
 
-    }  else if (command === 'clear') {
+    } else if (command === 'clear') {
         client.commands.get('clear').execute(message, args);
 
     } else if (command === 'command') {
         client.commands.get('command').execute(message, args, Discord);
 
     } else if (command == 'whoppa') {
-        message.reply('DID U GET A WHOPPA? :hamburger:'); 
+        message.reply('DID U GET A WHOPPA? :hamburger:');
 
     } else if (command === '.') {
         client.commands.get('.').execute(message.args);
@@ -176,15 +156,15 @@ client.on('message', message => {
         client.commands.get('ratio').execute(message, args, Discord, client)
     }
 
-    else if (command === '.assist') {
-        client.commands.get('.assist').execute(message, args)
+    else if (command === 'assist') {
+        client.commands.get('assist').execute(message, args)
     }
 
     else if (command === 'rob') {
         message.reply('pls rob ' + args)
     }
 
-    else if (command === 'google') {
+    else if (command === '(unusable)') {
         client.commands.get('google').execute(message, args)
     }
 
@@ -267,7 +247,7 @@ client.on('message', message => {
             });
     }
 
-    else if (command == '') {
+    else if (command == 'rate') {
         message.reply("Like this bot? 😉");
         sentMessage.react('👍');
         sentMessage.react('👎');
@@ -283,31 +263,67 @@ client.on('message', message => {
 
     else if (command == 'guess-game') {
         var vars = ['car', 'house', 'cat', 'fish']
-        
+
         var guess = vars[Math.floor(Math.random() * vars)]
 
         if (!args[0]) {
             message.reply('Argument needed!');
-        } 
-        
+        }
+
         else if ((args[0]).toLowerCase() = 'cat') {
             //cant code wow
-            
+
         }
     }
 
     else if (command === 'robux') {
         client.commands.get('robux').execute(message, args, Discord)
     }
+
+    else if (command == 'emojify') {
+        let args = message.content.split(' ');
+
+        for (args.length < 10; args++;) {
+            message.reply(`:regional_indicator_${args}:`)
+        }
+    }
+
+    else if (command === 'split') {
+        let args = message.content.split().join(' ');
+
+        message.reply(`${args}\n\n          - **${message.author.username}**`)
+    }
+
+    else if (command == 'tlc') {
+        message.reply(args.join(" ").toLowerCase())
+    }
+
+    else if (command == 'dox') {
+        let user = message.mentions.users.first();
+        var ip = (Math.floor(Math.random() * 255) + 1) + "." + (Math.floor(Math.random() * 255)) + "." + (Math.floor(Math.random() * 255)) + "." + (Math.floor(Math.random() * 255));
+        
+        if (!args[0]) {
+            message.reply('Who do you want to dox?'),
+            message.react('🖲')
+        }
+
+        if (user) {
+            message.reply(`<@${user.id}>'s IP adress is: ` + '`' + ip + '`'),
+            message.react('✔');
+            /*
+            setTimeout(function () {
+                Client.message.edit('`Complete!`')
+                setTimeout(function () {
+                    Client.message.edit(`<@${user.id}>'s IP adress is: ` + '`' + ip + '`'),
+                    message.react('✔');
+                }, 700)
+            }, 1000)
+            */
+        }
+    }
 });
 
-client.login(process.env.DISCORD_TOKEN); 
-
-/*
-win + r: cmd
-shutdown /s 
-*/ 
-
+client.login(process.env.DISCORD_TOKEN);
 
 var user = new Twitter({
     consumer_key: process.env.TWITTER_CONSUMER_KEY,
