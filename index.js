@@ -1,4 +1,5 @@
 const Discord = require('discord.js');
+const google = require('google')
 const { Client, Intents } = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 require('@discordjs/voice');
@@ -164,8 +165,17 @@ client.on('message', message => {
         message.reply('pls rob ' + args)
     }
 
-    else if (command === '(unusable)') {
-        client.commands.get('google').execute(message, args)
+    else if (command === 'google') {
+        google('node.js best practices', function (err, res) {
+            if (err) return console.error(err)
+
+            for (var i = 0; i < res.links.length; ++i) {
+                var link = res.links[i];
+                console.log(link.title + ' - ' + link.href)
+                console.log(link.description + "\n")
+            }
+        })
+        //client.commands.get('google').execute(message, args, Discord)
     }
 
     else if (command === 'warn') {
@@ -301,15 +311,15 @@ client.on('message', message => {
     else if (command == 'dox') {
         let user = message.mentions.users.first();
         var ip = (Math.floor(Math.random() * 255) + 1) + "." + (Math.floor(Math.random() * 255)) + "." + (Math.floor(Math.random() * 255)) + "." + (Math.floor(Math.random() * 255));
-        
+
         if (!args[0]) {
             message.reply('Who do you want to dox?'),
-            message.react('🖲')
+                message.react('🖲')
         }
 
         if (user) {
             message.reply(`<@${user.id}>'s IP adress is: ` + '`' + ip + '`'),
-            message.react('✔');
+                message.react('✔');
             /*
             setTimeout(function () {
                 Client.message.edit('`Complete!`')
@@ -320,6 +330,10 @@ client.on('message', message => {
             }, 1000)
             */
         }
+    }
+
+    else if (command === 'file') {
+        client.commands.get('file').execute(message, args)
     }
 });
 

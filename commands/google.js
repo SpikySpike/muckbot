@@ -1,21 +1,30 @@
-const SerpApi = require('google-search-results-nodejs')
-const search = new SerpApi.GoogleSearch()
-const api_key = require('./config2.json')
-const { description } = require('./command');
+const google = require('google')
 
 module.exports = {
     name: 'google',
     description: "google something",
-    execute(message, args) {
-        if (!args[0]) {
-            message.reply('You need to type something to google it!'), message.react('❌');
-        }
-        else search.json({
-            api_key: api_key,
-            q: args, 
-            location: "United States"
-           }, (result) => {
-             message.reply(result)
-           })
+    execute(message, args, Discord) {
+        google.resultsPerPage = 5;
+        google.lang = 'en';
+
+
+        const googleEmbed = new Discord.MessageEmbed()
+            .setTitle("Google Search Results")
+            .setColor('RANDOM')
+            .setTimestamp()
+
+
+        google({
+            query: args.join(' ')
+        })
+            (results => {
+                results.forEach(function (item, index) {
+                    googleEmbed.addField((index + 1) + ": " + item.title, "<" + item.link + ">");
+                });
+
+                message.reply({ embeds: googleEmbed });
+            }).catch(error => {
+                message.reply(error)
+            });
     }
 }
