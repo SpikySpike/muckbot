@@ -77,7 +77,7 @@ client.on('message', message => {
         message.reply('https://tenor.com/view/dance-moves-dancing-singer-groovy-gif-17029825 ' + args);
 
     } else if (command == 'say') {
-        message.channel.send(`${args}\n\n          - **${message.author.username}**`);
+        message.channel.send(`${args.join(" ")}\n\n          - **${message.author.username}**`);
 
     } else if (command == 'spoiler') {
         message.reply('||' + args.join(" ") + '||');
