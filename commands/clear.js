@@ -1,3 +1,5 @@
+const { Client } = require("discord.js");
+
 module.exports = {
     name: 'clear',
     description: "Clear messages!",
@@ -14,11 +16,16 @@ module.exports = {
         }
 
         if(args[0]> 100) return message.reply("You can't delete more than **100 messages!**"), message.react("❌");
-        if(args[0] < 1) return message.reply("You must delete at least **one message!**"), message.react("❌");
+        if(args[0] < 1) return message.reply("You must delete at least **one message!**"), message.react("❌");  
+        
+        let sentMessage = Client.message
 
         await message.channel.messages.fetch({limit: args[0]}).then(messages =>{
             message.channel.bulkDelete(messages);
-            message.reply(`Cleared ${args} messages! :wastebasket:`);
+
+            message.reply(`Cleared ${args} messages! :wastebasket:`).then(msg => {
+                setTimeout(() => message.bulkDelete(messages), 6000)
+              })
         });
     }
 }

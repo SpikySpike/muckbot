@@ -15,10 +15,13 @@ const minigames = require('discord-minigames');
 const { GuildMember, Message } = require('discord.js');
 const TicTacToe = require('discord-tictactoe');
 const { string } = require('mathjs');
+const math = require('mathjs')
 const tweet = require('./commands/tweet');
 const dotenv = require('dotenv').config();
 const game = new TicTacToe({ language: 'en' });
 const { balances } = require("./balances.json");
+const { Emoji } = require('discord.js');
+const { channel } = require('diagnostics_channel');
 
 client.commands = new Discord.Collection();
 const commandFiles = fs.readdirSync('./commands/').filter(file => file.endsWith('.js'));
@@ -37,13 +40,10 @@ client.on('ready', () => {
     });
 });
 
-const data = new SlashCommandBuilder()
-    .setName('echo')
-    .setDescription('Replies with your input!')
-    .addStringOption(option =>
-        option.setName('input')
-            .setDescription('The input to echo back')
-            .setRequired(true));
+client.on("guildCreate", guild => {
+    guild.channels.cache.find(channel => channel.name === 'general').send('Thanks for adding me to your server! You can use m!help to find commands! 💖');
+    console.log(`New guild joined: ${guild.name} (id: ${guild.id}). This guild has ${guild.memberCount} members!`);
+});
 
 client.on('guildMemberAdd', guildMember => {
     let welcomeRole = guildMember.guild.roles.cache.find(role => role.name === 'Member');
@@ -52,8 +52,7 @@ client.on('guildMemberAdd', guildMember => {
     guildMember.guild.channels.cache.get(channel => channel.name === "welcome").send(`Welcome ${guildMember.user} to our server! :anatomical_heart:`);
 });
 
-client.on('message', message => {
-
+client.on('messageCreate', message => {
 
     if (!message.content.startsWith(prefix) || message.author.bot) return;
 
@@ -139,14 +138,14 @@ client.on('message', message => {
         client.commands.get('..').execute(message.args);
 
     } else if (command === 'dumbrate') {
-        client.commands.get('dumbrate').execute(message, args, Math, Discord)
+        client.commands.get('dumbrate').execute(message, args, Discord)
 
     } else if (command === 'rps') {
         client.commands.get('rps').execute(message, args)
     }
 
     else if (command === 'help') {
-        message.reply('This bot is made with <:JsLogo:864098557954490418>! Please read our documentation here:')
+        message.reply('All commands: https://github.com/spikyspike/muckbot/')
     }
 
     else if (command === '8ball') {
@@ -175,7 +174,7 @@ client.on('message', message => {
                 console.log(link.description + "\n")
             }
         })
-        //client.commands.get('google').execute(message, args, Discord)
+        //client.commands.get('google').execute(message, args, Discord) 
     }
 
     else if (command === 'warn') {
@@ -191,8 +190,8 @@ client.on('message', message => {
     }
 
     else if (command === 'react') {
-        message.react(`<@${args}>`);
-        message.reply('Success! ❤')
+        message.react(`<${args}>`);
+        message.reply(`<${args}>`)
     }
 
     else if (command === 'thread') {
@@ -273,16 +272,27 @@ client.on('message', message => {
 
     else if (command == 'guess-game') {
         var vars = ['car', 'house', 'cat', 'fish']
-
-        var guess = vars[Math.floor(Math.random() * vars)]
+        var item = vars[Math.floor(Math.random() * vars.length)];
 
         if (!args[0]) {
-            message.reply('Argument needed!');
+            message.reply("Please guess either car, house, cat or fish");
+            return;
         }
 
-        else if ((args[0]).toLowerCase() = 'cat') {
-            //cant code wow
+        var guess = args[0];
 
+        if (!(guess in vars)) {
+            message.reply("Invalid guess. Please include either car, house,cat oor rish");
+            return;
+        }
+
+        if (guess === item) {
+            message.reply("You guessed correctly!");
+            message.react('🎉');
+        }
+
+        else {
+            message.reply("Wrong one, man."), message.react('👎');
         }
     }
 
@@ -308,32 +318,110 @@ client.on('message', message => {
         message.reply(args.join(" ").toLowerCase())
     }
 
-    else if (command == 'dox') {
+    else if (command == 'dox') { //
         let user = message.mentions.users.first();
         var ip = (Math.floor(Math.random() * 255) + 1) + "." + (Math.floor(Math.random() * 255)) + "." + (Math.floor(Math.random() * 255)) + "." + (Math.floor(Math.random() * 255));
 
         if (!args[0]) {
-            message.reply('Who do you want to dox?'),
-                message.react('🖲')
+            message.reply('You have to type in who do you want to dox!'),
+                message.react('😨')
         }
 
         if (user) {
-            message.reply(`<@${user.id}>'s IP adress is: ` + '`' + ip + '`'),
-                message.react('✔');
-            /*
-            setTimeout(function () {
-                Client.message.edit('`Complete!`')
+            message.reply('`Getting IP address...`'),
                 setTimeout(function () {
-                    Client.message.edit(`<@${user.id}>'s IP adress is: ` + '`' + ip + '`'),
-                    message.react('✔');
-                }, 700)
-            }, 1000)
-            */
+                    message.channel.send('`Hacking SSH...`')
+                    setTimeout(function () {
+                        message.channel.send(`<@${user.id}>'s IP adress is: ` + '`' + ip + '`'),
+                            message.react('<:tick:889135012253954058>');
+                    }, 1000)
+                }, 3000)
+        }
+
+        else if (args === `<@${Client.user.id}>`) {
+            message.reply("You can't dox me!"), message.react(':regional_indicator_n:', ':regional_indicator_o:', ':o2:', ':regional_indicator_b:');
         }
     }
 
     else if (command === 'file') {
-        client.commands.get('file').execute(message, args)
+        client.commands.get('file').execute(message, args, fs)
+    }
+
+    else if (command === 'announce') { //kanava
+        
+
+        message.guild.cache.forEach(guild => {
+            try {
+                const channel = guild.channels.cache.find(channel => channel.name === 'announcements') || guild.channels.cache.first();
+                if (channel) {
+                    channel.send(args.join(" "));
+                } else {
+                    console.log('The server ' + guild.name + ' has no channels with the name: ' + channel.name);
+                }
+            } catch (err) {
+                console.log('Could not send message to ' + guild.name + '.');
+            }
+        });
+        /*
+        message.guild.channels.cache.forEach(guild => {
+            try {
+                const channel = guild.channels.cache.find(channel => channel.name === 'announcements') || guild.channels.cache.first();
+                if (channel) {
+                    channel.send(args.join(" "));
+                } else {
+                    console.log('The server ' + guild.name + ' has no channels with the name: ' + channel.name);
+                }
+            } catch (err) {
+                console.log('Could not send message to ' + guild.name + '.');
+            }
+        });
+        */
+    }
+
+    else if (command === 'math') {
+        client.commands.get('math').execute(message, args, Discord, math)
+    }
+
+    else if (command === 'ccreate') {
+        if (message.author.id === '733342027366006874') {
+
+        }
+
+        else if (!message.author.id === '733342027366006874') {
+            message.reply("You don't have right permissions to create channels!")
+        }
+    }
+
+    else if (command === 'bankrob') {
+        message.channel.send('pls rob <@828334839220142112>')
+    }
+
+    else if (command === '') {
+        const fetchedChannel = channel.id
+
+        if (args[0] === 'nsfw') {
+            if (args[1]) {
+                fetchedChannel.edit({ nsfw: !channel.nsfw });
+                message.reply(`Successfully set ${args} to NSFW!`), message.react('<:tick:889135012253954058>');
+            }
+            else {
+                message.reply("Please include the channel you want to set NSFW!"), message.react('❌');
+            }
+        }
+
+        else if (args[0] === 'delete') {
+            if (args[1]) {
+                fetchedChannel.delete();
+                message.reply(`Successfully deleted channel ${args}`), message.react('<:tick:889135012253954058>');
+            }
+            else {
+                message.reply("Please include the channel you want to delete!"), message.react('❌');
+            }
+        }
+    }
+
+    else if (command === '') {
+        
     }
 });
 

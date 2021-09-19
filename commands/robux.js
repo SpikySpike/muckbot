@@ -10,6 +10,6 @@ module.exports = {
         .setImage('https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Robux_2019_Logo_gold.svg/1200px-Robux_2019_Logo_gold.svg.png')
         .setTimestamp()
         
-        message.reply({ embeds: robuxEmbed })
+        message.reply({ embeds: [robuxEmbed] })
     }
 }
