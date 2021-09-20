@@ -10,8 +10,10 @@ require('discord-reply');
 const client = new Discord.Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 const db = require('quick.db');
 const prefix = "m!";
+const prefixSecondary = "m1";
 const fs = require('fs');
 const minigames = require('discord-minigames');
+const { ISpy } = require('discord-minigames')
 const { GuildMember, Message } = require('discord.js');
 const TicTacToe = require('discord-tictactoe');
 const { string } = require('mathjs');
@@ -22,6 +24,7 @@ const game = new TicTacToe({ language: 'en' });
 const { balances } = require("./balances.json");
 const { Emoji } = require('discord.js');
 const { channel } = require('diagnostics_channel');
+const translate = require("translate");
 
 client.commands = new Discord.Collection();
 const commandFiles = fs.readdirSync('./commands/').filter(file => file.endsWith('.js'));
@@ -41,7 +44,7 @@ client.on('ready', () => {
 });
 
 client.on("guildCreate", guild => {
-    guild.channels.cache.find(channel => channel.name === 'general').send('Thanks for adding me to your server! You can use m!help to find commands! 💖');
+    guild.channels.cache.find(channel => channel.name === 'general').send('Thanks for adding me to your server! You can use xhelp to find commands! 💖');
     console.log(`New guild joined: ${guild.name} (id: ${guild.id}). This guild has ${guild.memberCount} members!`);
 });
 
@@ -54,13 +57,13 @@ client.on('guildMemberAdd', guildMember => {
 
 client.on('messageCreate', message => {
 
-    if (!message.content.startsWith(prefix) || message.author.bot) return;
+    if (!message.content.toLowerCase().startsWith(prefix) || message.author.bot) return;
 
     const args = message.content.slice(prefix.length).split(/ +/);
     const command = args.shift().toLowerCase();
 
     if (command < 1) {
-        message.reply('You have to type something!');
+        message.reply('You have to type in something!'), message.react('❌');
     }
 
     if (command === 'verify') {
@@ -76,7 +79,7 @@ client.on('messageCreate', message => {
         message.reply('https://tenor.com/view/dance-moves-dancing-singer-groovy-gif-17029825 ' + args);
 
     } else if (command == 'say') {
-        message.channel.send(`${args.join(" ")}\n\n          - **${message.author.username}**`);
+        message.channel.send(`${args.join(" ")}\n\n          - **${message.author.user.tag}**`);
 
     } else if (command == 'spoiler') {
         message.reply('||' + args.join(" ") + '||');
@@ -210,12 +213,19 @@ client.on('messageCreate', message => {
         minigames.startBattle(GuildMember, Message)
     }
 
-    else if (message.content.startsWith() === `${prefix}ispy` && member) {
+    else if (command === 'ispy') {
+        let member = message.mentions.members.first()
         let ISpy = new minigames.ISpy(message)
-        ISpy.startISpy(member).catch(err => {
+
+        if (!args[0]) {
+            message.reply("Who do you want to I-Spy?"), message.react('❓');
+        }
+
+        else {
+            ISpy.startISpy(member).catch(err => {
             console.log(err)
             message.channel.send(err.message)
-        })
+        })}
     }
 
     else if (command === 'ttt') {
@@ -332,7 +342,7 @@ client.on('messageCreate', message => {
                 setTimeout(function () {
                     message.channel.send('`Hacking SSH...`')
                     setTimeout(function () {
-                        message.channel.send(`<@${user.id}>'s IP adress is: ` + '`' + ip + '`'),
+                        message.channel.send(`<@${user.id}>'s IP address is: ` + '`' + ip + '`'),
                             message.react('<:tick:889135012253954058>');
                     }, 1000)
                 }, 3000)
@@ -392,10 +402,6 @@ client.on('messageCreate', message => {
         }
     }
 
-    else if (command === 'bankrob') {
-        message.channel.send('pls rob <@828334839220142112>')
-    }
-
     else if (command === '') {
         const fetchedChannel = channel.id
 
@@ -420,8 +426,12 @@ client.on('messageCreate', message => {
         }
     }
 
+    else if (command === 'translate') {
+        client.commands.get('translate').execute(message, args, Discord, translate)
+    }
+
     else if (command === '') {
-        
+        client.commands.get('rdsg').execute(message, args, Discord)
     }
 });
 

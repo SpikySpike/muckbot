@@ -7,7 +7,7 @@ module.exports = {
     name: 'play',
     description: 'Joins and plays a video from YouTube',
     async execute(message, args, Discord) {
-        const voiceChannel = message.member.voice.channel;
+        const voiceChannel = message.member.voiceChannel;
 
         if (!voiceChannel) return message.reply('You need to be in a voice channel to use this command!'), message.react("❌");
         const permissions = voiceChannel.permissionsFor(message.client.user);
@@ -31,7 +31,7 @@ module.exports = {
 
         if (video) {
             const stream = ytdl(video.url, { filter: 'audioonly' });
-            connection.play(stream, { seek: 0, volume: 1 })
+            connection.stream.on(stream, { seek: 0, volume: 1 })
                 .on('finish', () => {
                     voiceChannel.leave();
                 });

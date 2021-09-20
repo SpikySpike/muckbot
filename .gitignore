@@ -3,3 +3,5 @@ node_modules
 config.json
 invite.txt
 commands/config2.json
+img/
+prefixes.db

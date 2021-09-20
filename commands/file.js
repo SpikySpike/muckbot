@@ -1,5 +1,3 @@
-
-
 module.exports = {
     name: 'file',
     description: "find a file on author's pc!",
