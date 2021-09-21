@@ -7,9 +7,15 @@ module.exports = {
         if(member && message.member.roles.cache.has('863731085196263455')){
                 const memberTarget = message.guild.members.cache.get(member.id);
                 memberTarget.ban();
-                message.channel.send("User has been banned!");
-        }else{
-            message.channel.send("I couldn't ban that member, or you don't have permissions to ban members.");
+                message.reply(`${member} has been banned!`);
+        }
+        else if (!args[0]) {
+            message.reply("You have to type in who do you want to ban!");
+        }
+        
+        
+        else {
+            message.reply("I couldn't ban that member, or you don't have permissions to ban members.");
         }
     }
 }

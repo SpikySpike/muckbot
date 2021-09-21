@@ -13,7 +13,7 @@ module.exports = {
             message.channel.bulkDelete(messages);
 
                 message.reply(`Cleared ${args} messages! :wastebasket:`).then(msg => {
-                    setTimeout(() => msg.react('🗑'), 6000)
+                    setTimeout(() => msg.react('🗑'), 1000)
                 })
         });
     }

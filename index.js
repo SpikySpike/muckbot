@@ -7,7 +7,7 @@ const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 var Twitter = require('Twitter');
 require('discord-reply');
-const client = new Discord.Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
+const client = new Discord.Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES] });
 const db = require('quick.db');
 const prefix = "m!";
 const prefixSecondary = "m1";
@@ -79,7 +79,12 @@ client.on('messageCreate', message => {
         message.reply('https://tenor.com/view/dance-moves-dancing-singer-groovy-gif-17029825 ' + args);
 
     } else if (command == 'say') {
-        message.channel.send(`${args.join(" ")}\n\n          - **${message.author.user.tag}**`);
+        const replies = ['Stop trying.']
+
+        if (args[0] === '@everyone') return message.reply(`${replies}`), message.react('👎');
+        else {
+            message.channel.send(`${args.join(" ")}\n\n        - ***${message.author.username}***`);
+        }
 
     } else if (command == 'spoiler') {
         message.reply('||' + args.join(" ") + '||');
@@ -102,17 +107,20 @@ client.on('messageCreate', message => {
         message.reply('https://www.youtube.com/' + args + " go check this out!");
         message.react("<:youtube:887361211031748719>");
 
-    } else if (command === 'image') {
+    } else if (command === 'img') {
         client.commands.get('image').execute(message, args);
 
     } else if (command === 'play') {
         client.commands.get('play').execute(message, args, Discord);
 
+    } else if (command === 'playfiles') {
+        client.commands.get('playfiles').execute(message, args, Discord);
+
     } else if (command === 'leave') {
         client.commands.get('leave').execute(message, args);
 
-    } else if (command === 'turnoff') {
-        if (args.join(" ") == password) {
+    } else if (command === 'off') {
+        if (args == process.env.SHUTDOWN_PASSWORD) {
             message.reply('Goodbye! 💔');
             message.react('😢');
             setTimeout(function () {
@@ -325,7 +333,11 @@ client.on('messageCreate', message => {
     }
 
     else if (command == 'tlc') {
-        message.reply(args.join(" ").toLowerCase())
+        message.reply('```' + args.join(" ").toLowerCase() + '```')
+    }
+
+    else if (command == 'tuc') {
+        message.reply('```' + args.join(" ").toUpperCase() + '```')
     }
 
     else if (command == 'dox') { //
@@ -348,8 +360,8 @@ client.on('messageCreate', message => {
                 }, 3000)
         }
 
-        else if (args === `<@${Client.user.id}>`) {
-            message.reply("You can't dox me!"), message.react(':regional_indicator_n:', ':regional_indicator_o:', ':o2:', ':regional_indicator_b:');
+        else if (args.concat() === `<@863088704296845312>`) {
+            message.reply("You can't dox me!"), message.react('❌');
         }
     }
 
@@ -357,7 +369,7 @@ client.on('messageCreate', message => {
         client.commands.get('file').execute(message, args, fs)
     }
 
-    else if (command === 'announce') { //kanava
+    else if (command === 'announce') {
         
 
         message.guild.cache.forEach(guild => {
@@ -403,7 +415,7 @@ client.on('messageCreate', message => {
     }
 
     else if (command === '') {
-        const fetchedChannel = channel.id
+        const fetchedChannel = channel({ type: 'TEXT_CHANNEL' })
 
         if (args[0] === 'nsfw') {
             if (args[1]) {
@@ -433,11 +445,27 @@ client.on('messageCreate', message => {
     else if (command === '') {
         client.commands.get('rdsg').execute(message, args, Discord)
     }
+
+    else if (command === 'music') {
+        client.commands.get('music').execute(message, args, Discord)
+    }
+
+    else if (command === 'site') {
+        if (!args[0]) return message.reply('You have to insert website link!'), message.react('❌');
+
+        else {
+            message.reply(`https://${args[0]}/`)
+        }
+    }
+
+    else if (command === 'code') {
+        message.reply('```' + args[0] + '\n' + args[1] + '\n```')
+    }
 });
 
 client.login(process.env.DISCORD_TOKEN);
 
-var user = new Twitter({
+var twitterUser = new Twitter({
     consumer_key: process.env.TWITTER_CONSUMER_KEY,
     consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
     access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,

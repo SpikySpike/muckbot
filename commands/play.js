@@ -1,13 +1,13 @@
 const { joinVoiceChannel } = require('@discordjs/voice');
+const player = require('discord-player');
 const ytdl = require('ytdl-core');
 const ytSearch = require('yt-search');
-const yts = require('yt-search');
 
 module.exports = {
     name: 'play',
     description: 'Joins and plays a video from YouTube',
     async execute(message, args, Discord) {
-        const voiceChannel = message.member.voiceChannel;
+        const voiceChannel = await message.member.voice.channel;
 
         if (!voiceChannel) return message.reply('You need to be in a voice channel to use this command!'), message.react("❌");
         const permissions = voiceChannel.permissionsFor(message.client.user);
@@ -19,7 +19,7 @@ module.exports = {
             channelId: message.member.voice.channel.id,
             guildId: message.guild.id,
             adapterCreator: message.guild.voiceAdapterCreator
-        })
+        });
 
         const videoFinder = async (query) => {
             const videoResult = await ytSearch(query);
@@ -31,7 +31,7 @@ module.exports = {
 
         if (video) {
             const stream = ytdl(video.url, { filter: 'audioonly' });
-            connection.stream.on(stream, { seek: 0, volume: 1 })
+            connection.play(stream, { seek: 0, volume: 1 })
                 .on('finish', () => {
                     voiceChannel.leave();
                 });
