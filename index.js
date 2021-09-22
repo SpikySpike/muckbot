@@ -9,7 +9,7 @@ var Twitter = require('Twitter');
 require('discord-reply');
 const client = new Discord.Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES] });
 const db = require('quick.db');
-const prefix = "m!";
+const prefix = `m!`;
 const prefixSecondary = "m1";
 const fs = require('fs');
 const minigames = require('discord-minigames');
@@ -25,6 +25,7 @@ const { balances } = require("./balances.json");
 const { Emoji } = require('discord.js');
 const { channel } = require('diagnostics_channel');
 const translate = require("translate");
+const { shutdownPass } = require('./config.json')
 
 client.commands = new Discord.Collection();
 const commandFiles = fs.readdirSync('./commands/').filter(file => file.endsWith('.js'));
@@ -69,19 +70,17 @@ client.on('messageCreate', message => {
     if (command === 'verify') {
         client.commands.get('verify').execute(message, args);
 
-    } else if (command == 'yt') {
-        message.reply("Check out author's channel! " + 'https://www.youtube.com/channel/UCmWj2jCeTgjTSFvqNjUDywg');
-
-    } else if (command == 'hello') {
+    }  else if (command == 'hello') {
         message.reply('Hello ' + `<@${message.author.id}>` + '!');
 
     } else if (command == 'admin') {
         message.reply('https://tenor.com/view/dance-moves-dancing-singer-groovy-gif-17029825 ' + args);
 
     } else if (command == 'say') {
-        const replies = ['Stop trying.']
+        const replies = ['Stop trying.', "If you can't tag everyone, why are you doing this?", 'If you do that a lot, you can result a ban!']
+        const repliesRandom = Math.floor(Math.random() * replies)
 
-        if (args[0] === '@everyone') return message.reply(`${replies}`), message.react('👎');
+        if (args.includes('@everyone')) return message.reply(`${repliesRandom}`), message.react('❌');
         else {
             message.channel.send(`${args.join(" ")}\n\n        - ***${message.author.username}***`);
         }
@@ -95,7 +94,7 @@ client.on('messageCreate', message => {
     } else if (command === 'ban') {
         client.commands.get('ban').execute(message, args);
 
-    } else if (command == 'twitter') {
+    } else if (command == 'twitter' || command === 'twt') {
         message.reply('https://twitter.com/' + args);
         message.react("<:twitterlogo:883038337731010680>");
 
@@ -103,12 +102,12 @@ client.on('messageCreate', message => {
         message.reply('https://www.reddit.com/' + args);
         message.react("<:reddit:887361210692026418>");
 
-    } else if (command == 'youtube') {
-        message.reply('https://www.youtube.com/' + args + " go check this out!");
+    } else if (command == 'youtube' || command === 'yt') {
+        message.reply('https://www.youtube.com/' + args);
         message.react("<:youtube:887361211031748719>");
 
-    } else if (command === 'img') {
-        client.commands.get('image').execute(message, args);
+    } else if (command === 'img' || command === 'image') {
+        client.commands.get('image').execute(message, args, Discord);
 
     } else if (command === 'play') {
         client.commands.get('play').execute(message, args, Discord);
@@ -116,11 +115,11 @@ client.on('messageCreate', message => {
     } else if (command === 'playfiles') {
         client.commands.get('playfiles').execute(message, args, Discord);
 
-    } else if (command === 'leave') {
+    } else if (command === 'stop') {
         client.commands.get('leave').execute(message, args);
 
-    } else if (command === 'off') {
-        if (args == process.env.SHUTDOWN_PASSWORD) {
+    } else if (command === 'off' || command === 'shutdown') {
+        if (args == shutdownPass) {
             message.reply('Goodbye! 💔');
             message.react('😢');
             setTimeout(function () {
@@ -128,15 +127,18 @@ client.on('messageCreate', message => {
             }, 3000);
         }
 
-        else {
-            message.reply('Enter the password!');
-            message.react('❌');
+        else if (!args[0]) {
+            message.reply('Enter the password!'), message.react('❌');
         }
 
-    } else if (command === 'clear') {
+        else {
+            message.reply('Wrong password!'), message.react('❌');
+        }
+
+    } else if (command === 'clear' || command === 'clean') {
         client.commands.get('clear').execute(message, args);
 
-    } else if (command === 'command') {
+    } else if (command === 'command' || command === 'cmd') {
         client.commands.get('command').execute(message, args, Discord);
 
     } else if (command == 'whoppa') {
@@ -148,7 +150,7 @@ client.on('messageCreate', message => {
     } else if (command === '..') {
         client.commands.get('..').execute(message.args);
 
-    } else if (command === 'dumbrate') {
+    } else if (command === 'dumbrate' || command === 'dr') {
         client.commands.get('dumbrate').execute(message, args, Discord)
 
     } else if (command === 'rps') {
@@ -459,7 +461,19 @@ client.on('messageCreate', message => {
     }
 
     else if (command === 'code') {
-        message.reply('```' + args[0] + '\n' + args[1] + '\n```')
+        if (!args[0]) {
+            message.reply('You need to insert programming language!'), message.react('❌');
+        }
+        else if (!args[1]) {
+            message.reply('You need to insert the code!'), message.react('❌');
+        }
+        else {
+            message.reply('```' + args[0] + '\n' + args[1] + '\n```')
+        }
+    }
+
+    else if (command === 'trigger' || command === 'triggered') {
+        client.commands.get('trigger').execute(message, args, Discord)
     }
 });
 

@@ -13,6 +13,8 @@
     "@discordjs/opus": "^0.5.3",
     "@discordjs/rest": "^0.1.0-canary.0",
     "@discordjs/voice": "^0.6.0",
+    "canvacord": "^5.2.3",
+    "canvas-constructor": "^5.0.1",
     "discord-api-types": "^0.23.1",
     "discord-minigames": "^1.2.2",
     "discord-music-player": "^8.1.0",

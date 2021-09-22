@@ -2,20 +2,15 @@ module.exports = {
     name: 'command',
     description: "Embeds!",
     execute(message, args, Discord){
-        args.join(" ");
         const testEmbed = new Discord.MessageEmbed()
         .setColor('#ffffff')
-        .setTitle(args)
-        .setURL('https://www.youtube.com/channel/UCmWj2jCeTgjTSFvqNjUDywg')
-        .setDescription(args)
-        .addFields(
-            {name: args, value: args},
-            {name: args, value: args},
-            {name: args, value: args},
-            {name: args, value: args},
-        )
-        .setFooter(args)
+        .setTitle('Test Embed!')
+        .setURL('https://www.youtube.com/watch?v=dQw4w9WgXcQ')
+        .setDescription('Test Description!')
+        .setThumbnail('https://upload.wikimedia.org/wikipedia/commons/4/48/BLANK_ICON.png')
+        .setTimestamp()
+        .setFooter('Test Footer!', 'https://discordjs.guide/meta-image.png')
         
-        message.channel.send(testEmbed)
+        message.channel.send({ embeds: [testEmbed]})
     }
 }
