@@ -33,6 +33,7 @@
     "mongodb": "^3.6.10",
     "npm": "^7.23.0",
     "quick.db": "^7.1.3",
+    "skia-canvas": "^0.9.25",
     "translate": "^1.3.0",
     "twitter": "^1.7.1",
     "twitter-api-v2": "^1.5.1",

@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
-const google = require('google')
+const google = require('google');
+const { Canvas } = require('canvas-constructor/skia')
 const { Client, Intents } = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 require('@discordjs/voice');
@@ -78,7 +79,7 @@ client.on('messageCreate', message => {
 
     } else if (command == 'say') {
         const replies = ['Stop trying.', "If you can't tag everyone, why are you doing this?", 'If you do that a lot, you can result a ban!']
-        const repliesRandom = Math.floor(Math.random() * replies)
+        const repliesRandom = replies[Math.floor(Math.random() * replies.length)]
 
         if (args.includes('@everyone')) return message.reply(`${repliesRandom}`), message.react('❌');
         else {
@@ -474,6 +475,10 @@ client.on('messageCreate', message => {
 
     else if (command === 'trigger' || command === 'triggered') {
         client.commands.get('trigger').execute(message, args, Discord)
+    }
+
+    else if (command === 'makeimg') {
+        client.commands.get('makeimg').execute(message, args, Discord, Canvas)
     }
 });
 

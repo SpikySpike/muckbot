@@ -17,7 +17,7 @@ module.exports = {
 
         const imgEmbed = new Discord.MessageEmbed()
             .setColor('RANDOM')
-            .setTitle('Image Search Result: **' + args + '**')
+            .setTitle('Image Search Result: **' + args.join(" ") + '**')
             .setURL(image_results[0].url)
             .setImage(image_results[0].url)
             .setTimestamp()
