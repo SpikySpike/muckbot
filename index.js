@@ -26,7 +26,7 @@ const { balances } = require("./balances.json");
 const { Emoji } = require('discord.js');
 const { channel } = require('diagnostics_channel');
 const translate = require("translate");
-const { shutdownPass } = require('./config.json')
+const { shutdownPass } = require('./config.json');
 
 client.commands = new Discord.Collection();
 const commandFiles = fs.readdirSync('./commands/').filter(file => file.endsWith('.js'));
@@ -71,7 +71,7 @@ client.on('messageCreate', message => {
     if (command === 'verify') {
         client.commands.get('verify').execute(message, args);
 
-    }  else if (command == 'hello') {
+    } else if (command == 'hello') {
         message.reply('Hello ' + `<@${message.author.id}>` + '!');
 
     } else if (command == 'admin') {
@@ -93,7 +93,7 @@ client.on('messageCreate', message => {
         client.commands.get('kick').execute(message, args);
 
     } else if (command === 'ban') {
-        client.commands.get('ban').execute(message, args);
+        client.commands.get('ban').execute(message, args, Discord);
 
     } else if (command == 'twitter' || command === 'twt') {
         message.reply('https://twitter.com/' + args);
@@ -234,9 +234,10 @@ client.on('messageCreate', message => {
 
         else {
             ISpy.startISpy(member).catch(err => {
-            console.log(err)
-            message.channel.send(err.message)
-        })}
+                console.log(err)
+                message.channel.send(err.message)
+            })
+        }
     }
 
     else if (command === 'ttt') {
@@ -244,11 +245,11 @@ client.on('messageCreate', message => {
     }
 
     else if (command == 'github') {
-        message.reply('https://github/' + args);
+        message.reply('https://github.com/' + args);
         message.react("<:GitHub:864099758779924480>")
     }
 
-    else if (command == 'what') {
+    else if (command == '') {
         message.react('👍').then(() => message.react('👎'));
 
         const filter = (reaction, user) => {
@@ -268,19 +269,26 @@ client.on('messageCreate', message => {
     }
 
     else if (command == 'edit') {
-        message.reply('hello')
-            .then((msg) => {
-                setTimeout(function () {
-                    msg.edit('IT FINALLY PINGED WOO @everyone');
-                    message.channel.send('@everyone')
-                }, 100000)
-            });
+        if (!args) {
+            message.reply('What do you want me to edit?')
+        }
+
+        else {
+            message.reply(`This message will be edited to what ${message.author.username} says!`)
+                .then((sentMessage) => {
+                    setTimeout(function () {
+                        sentMessage.edit(args.join(' '));
+                    }, 5000)
+                });
+        }
     }
 
     else if (command == 'rate') {
-        message.reply("Like this bot? 😉");
-        sentMessage.react('👍');
-        sentMessage.react('👎');
+        message.reply("Like this bot? 😉")
+            .then(function (message) {
+                message.react("👍")
+                message.react("👎")
+            })
     }
 
     else if (command === "casino") {
@@ -289,6 +297,7 @@ client.on('messageCreate', message => {
 
     else if (command == 'priv') {
         //Interaction.reply({ephemeral: true})
+        message.reply({ content: 'private message', ephemeral: true })
     }
 
     else if (command == 'guess-game') {
@@ -363,8 +372,8 @@ client.on('messageCreate', message => {
                 }, 3000)
         }
 
-        else if (args.concat() === `<@863088704296845312>`) {
-            message.reply("You can't dox me!"), message.react('❌');
+        else if (args.includes('@everyone')) {
+            message.reply("You can't dox everyone!"), message.react('❌');
         }
     }
 
@@ -373,7 +382,7 @@ client.on('messageCreate', message => {
     }
 
     else if (command === 'announce') {
-        
+
 
         message.guild.cache.forEach(guild => {
             try {
@@ -408,11 +417,15 @@ client.on('messageCreate', message => {
     }
 
     else if (command === 'ccreate') {
-        if (message.author.id === '733342027366006874') {
-
+        if (message.member.permissions.has('ADMINISTRATOR')) {
+            message.guild.channels.create(args, {
+                type: 'GUILD_TEXT',
+                reason: 'new channel',
+                nsfw: true,
+              })
         }
 
-        else if (!message.author.id === '733342027366006874') {
+        else if (!message.member.permissions.has('ADMINISTRATOR')) {
             message.reply("You don't have right permissions to create channels!")
         }
     }
@@ -422,7 +435,7 @@ client.on('messageCreate', message => {
 
         if (args[0] === 'nsfw') {
             if (args[1]) {
-                fetchedChannel.edit({ nsfw: !channel.nsfw });
+                fetchedChannel.set({ nsfw: !channel.nsfw });
                 message.reply(`Successfully set ${args} to NSFW!`), message.react('<:tick:889135012253954058>');
             }
             else {
@@ -469,7 +482,7 @@ client.on('messageCreate', message => {
             message.reply('You need to insert the code!'), message.react('❌');
         }
         else {
-            message.reply('```' + args[0] + '\n' + args[1] + '\n```')
+            message.reply('```' + args[0] + '\n' + args.join(' ') + '\n```')
         }
     }
 
@@ -477,8 +490,65 @@ client.on('messageCreate', message => {
         client.commands.get('trigger').execute(message, args, Discord)
     }
 
-    else if (command === 'makeimg') {
-        client.commands.get('makeimg').execute(message, args, Discord, Canvas)
+    else if (command === 'canvas') {
+        client.commands.get('canvas').execute(message, args, Discord, Canvas)
+    }
+
+    else if (command === 'avatar' || command === 'pfp' || command === 'pfpic') {
+        client.commands.get('avatar').execute(message, args, Discord)
+    }
+    /*
+    else if (command === 'button' || command === 'btn') {
+        client.command.get('button').execute(message, args)
+    }*/
+
+    else if (command === 'dm') {
+        const user = message.mentions.users.first()
+
+        if (!args) {
+            message.reply('What do you want me to DM?')
+        }
+        else if (user) {
+            if (!args[1]) {
+                message.reply('You have to type in what you want me to DM!')
+            }
+            else {
+                message.react('👍')
+                message.reply(`DMing ${user.username}...`)
+                user.send(`**${message.author.username}** sent you a DM: ${args.join(' ')}`)
+            }
+        }
+        else {
+            message.react('👍')
+            message.author.send(`Message: ${args.join(' ')}`)
+        }
+    }
+
+    else if (command === 'anondm') {
+        const user = message.mentions.users.first()
+
+        if (!args) {
+            message.reply('What do you want me to DM?')
+        }
+        else if (user) {
+            if (!args[1]) {
+                message.reply('You have to type in what you want me to DM!')
+            }
+            else {
+                message.react('👍')
+                message.reply(`Anonymously DMing ${user.username}...`).then(msg => {
+                    setTimeout(() => msg.delete(), 3000)
+                    setTimeout(function(){
+                        message.delete()
+                    }, 3000);
+                  })
+                user.send(`**Anonymous** sent you a DM: ${args.join(' ')}`)
+            }
+        }
+        else {
+            message.react('👍')
+            message.author.send(`Message: ${args.join(' ')}`)
+        }
     }
 });
 
