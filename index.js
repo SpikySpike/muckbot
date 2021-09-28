@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const google = require('google');
 const { Canvas } = require('canvas-constructor/skia')
-const { Client, Intents } = require('discord.js');
+const { Client, Intents, MessageActionRow, MessageButton } = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 require('@discordjs/voice');
 const { REST } = require('@discordjs/rest');
@@ -27,6 +27,8 @@ const { Emoji } = require('discord.js');
 const { channel } = require('diagnostics_channel');
 const translate = require("translate");
 const { shutdownPass } = require('./config.json');
+const Minesweeper = require('discord.js-minesweeper');
+const Weky = require('weky')
 
 client.commands = new Discord.Collection();
 const commandFiles = fs.readdirSync('./commands/').filter(file => file.endsWith('.js'));
@@ -46,7 +48,7 @@ client.on('ready', () => {
 });
 
 client.on("guildCreate", guild => {
-    guild.channels.cache.find(channel => channel.name === 'general').send('Thanks for adding me to your server! You can use xhelp to find commands! 💖');
+    guild.channels.cache.find(channel => channel.name === 'general').send(`Thanks for adding me to your server! You can use ${prefix}help to find commands! 💖`);
     console.log(`New guild joined: ${guild.name} (id: ${guild.id}). This guild has ${guild.memberCount} members!`);
 });
 
@@ -159,7 +161,15 @@ client.on('messageCreate', message => {
     }
 
     else if (command === 'help') {
-        message.reply('All commands: https://github.com/spikyspike/muckbot/')
+		const helpBtn = new MessageActionRow()
+            .addComponents(
+                new MessageButton()
+                    .setLabel('Command List!')
+                    .setStyle('LINK')
+					.setURL('https://github.com/spikyspike/muckbot/')
+            );
+		
+        message.reply({ content: 'Full command list: https://github.com/spikyspike/muckbot/', components: [helpBtn] })
     }
 
     else if (command === '8ball') {
@@ -218,10 +228,6 @@ client.on('messageCreate', message => {
 
     else if (command === 'info') {
         message.reply('**Info** \nThis bot was created by SpikySpike#5298. The work started at July 2021. \nThe bot is not yet released.')
-    }
-
-    else if (command === 'battle') {
-        minigames.startBattle(GuildMember, Message)
     }
 
     else if (command === 'ispy') {
@@ -352,29 +358,8 @@ client.on('messageCreate', message => {
         message.reply('```' + args.join(" ").toUpperCase() + '```')
     }
 
-    else if (command == 'dox') { //
-        let user = message.mentions.users.first();
-        var ip = (Math.floor(Math.random() * 255) + 1) + "." + (Math.floor(Math.random() * 255)) + "." + (Math.floor(Math.random() * 255)) + "." + (Math.floor(Math.random() * 255));
-
-        if (!args[0]) {
-            message.reply('You have to type in who do you want to dox!'),
-                message.react('😨')
-        }
-
-        if (user) {
-            message.reply('`Getting IP address...`'),
-                setTimeout(function () {
-                    message.channel.send('`Hacking SSH...`')
-                    setTimeout(function () {
-                        message.channel.send(`<@${user.id}>'s IP address is: ` + '`' + ip + '`'),
-                            message.react('<:tick:889135012253954058>');
-                    }, 1000)
-                }, 3000)
-        }
-
-        else if (args.includes('@everyone')) {
-            message.reply("You can't dox everyone!"), message.react('❌');
-        }
+    else if (command == 'dox' || command == 'ip') { 
+        client.commands.get('ip').execute(message, args, Discord)
     }
 
     else if (command === 'file') {
@@ -422,7 +407,7 @@ client.on('messageCreate', message => {
                 type: 'GUILD_TEXT',
                 reason: 'new channel',
                 nsfw: true,
-              })
+            })
         }
 
         else if (!message.member.permissions.has('ADMINISTRATOR')) {
@@ -538,10 +523,10 @@ client.on('messageCreate', message => {
                 message.react('👍')
                 message.reply(`Anonymously DMing ${user.username}...`).then(msg => {
                     setTimeout(() => msg.delete(), 3000)
-                    setTimeout(function(){
+                    setTimeout(function () {
                         message.delete()
                     }, 3000);
-                  })
+                })
                 user.send(`**Anonymous** sent you a DM: ${args.join(' ')}`)
             }
         }
@@ -549,6 +534,40 @@ client.on('messageCreate', message => {
             message.react('👍')
             message.author.send(`Message: ${args.join(' ')}`)
         }
+    }
+
+    else if (command === 'minesweeper' || command === 'ms') {
+        const minesweeper = new Minesweeper();
+        minesweeper.start();
+        message.reply('This command is in progress!'), message.react(':gear:')
+    }
+
+    else if (command === 'calculator' || command === 'calc') {
+        client.commands.get('calc').execute(message, args, Discord)
+    }
+
+    else if (command === 'fight' || command === 'battle') {
+        client.commands.get('fight').execute(message, args, Discord)
+    }
+
+    else if (command === 'wupb') {
+        client.commands.get('wupb').execute(message, args, Discord)
+    }
+
+    else if (command === 'trivia') {
+        client.commands.get('trivia').execute(message, args, Discord)
+    }
+
+    else if (command === 'snake') {
+        client.commands.get('snake').execute(message, args, Discord)
+    }
+
+	else if (command === 'btn') {
+		client.commands.get('btn').execute(message, args, Discord, MessageActionRow, MessageButton)
+	}
+
+    else if (command === 'weather') {
+        client.commands.get('weather').execute(message, args)
     }
 });
 

@@ -29,25 +29,29 @@ module.exports = {
 
         const video = await videoFinder(args.join(' '));
 
-        if (video) {
-            const stream = ytdl(video.url, { filter: 'audioonly' });
-            connection.play(stream, { seek: 0, volume: 1 })
-                .on('finish', () => {
-                    voiceChannel.leave();
-                });
-
-            const videoEmbed = new Discord.MessageEmbed()
-                .setColor('RANDOM')
-                .setTitle('🎶 Now playing...')
-                .setURL(video.url)
-                .setDescription(video.title)
-                .setImage(video.thumbnail)
-                .setTimestamp()
-                .setFooter(video.duration);
-
-            await message.reply({ embeds: [videoEmbed] });
-        } else {
-            message.reply('No video results found :(')
+        try {
+            if (video) {
+                const stream = ytdl(video.url, { filter: 'audioonly' });
+                connection.play(stream, { seek: 0, volume: 1 })
+                    .on('finish', () => {
+                        voiceChannel.leave();
+                    });
+    
+                const videoEmbed = new Discord.MessageEmbed()
+                    .setColor('RANDOM')
+                    .setTitle('🎶 Now playing...')
+                    .setURL(video.url)
+                    .setDescription(video.title)
+                    .setImage(video.thumbnail)
+                    .setTimestamp()
+                    .setFooter(video.duration);
+    
+                await message.reply({ embeds: [videoEmbed] });
+            } else {
+                message.reply('No video results found :(')
+            }
+        } catch (error) {
+            message.reply('Error:' + '```' + error + '```')
         }
     }
 }

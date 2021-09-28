@@ -1,5 +1,3 @@
-const { Client } = require("discord.js");
-
 module.exports = {
     name: 'clear',
     description: "Clear messages!",
