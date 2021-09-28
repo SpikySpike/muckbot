@@ -28,7 +28,7 @@ const { channel } = require('diagnostics_channel');
 const translate = require("translate");
 const { shutdownPass } = require('./config.json');
 const Minesweeper = require('discord.js-minesweeper');
-const Weky = require('weky')
+const Weky = require('weky');
 
 client.commands = new Discord.Collection();
 const commandFiles = fs.readdirSync('./commands/').filter(file => file.endsWith('.js'));
@@ -448,7 +448,11 @@ client.on('messageCreate', message => {
     }
 
     else if (command === 'music') {
-        client.commands.get('music').execute(message, args, Discord)
+        try {
+            client.commands.get('music').execute(message, args, Discord)
+        } catch (err) {
+            message.reply('⚠ Error:' + '```' + err + '```')
+        }
     }
 
     else if (command === 'site') {
@@ -566,8 +570,12 @@ client.on('messageCreate', message => {
 		client.commands.get('btn').execute(message, args, Discord, MessageActionRow, MessageButton)
 	}
 
-    else if (command === 'weather') {
-        client.commands.get('weather').execute(message, args)
+    else if (command === 'gifme') {
+        client.commands.get('gifme').execute(message, args, Canvas)
+    }
+
+    else if (command === 'games') {
+        client.commands.get('games').execute(message, args, Discord, client)
     }
 });
 
