@@ -161,14 +161,14 @@ client.on('messageCreate', message => {
     }
 
     else if (command === 'help') {
-		const helpBtn = new MessageActionRow()
+        const helpBtn = new MessageActionRow()
             .addComponents(
                 new MessageButton()
                     .setLabel('Command List!')
                     .setStyle('LINK')
-					.setURL('https://github.com/spikyspike/muckbot/')
+                    .setURL('https://github.com/spikyspike/muckbot/')
             );
-		
+
         message.reply({ content: 'Full command list: https://github.com/spikyspike/muckbot/', components: [helpBtn] })
     }
 
@@ -189,16 +189,7 @@ client.on('messageCreate', message => {
     }
 
     else if (command === 'google') {
-        google('node.js best practices', function (err, res) {
-            if (err) return console.error(err)
-
-            for (var i = 0; i < res.links.length; ++i) {
-                var link = res.links[i];
-                console.log(link.title + ' - ' + link.href)
-                console.log(link.description + "\n")
-            }
-        })
-        //client.commands.get('google').execute(message, args, Discord) 
+        client.commands.get('google').execute(message, args, Discord) 
     }
 
     else if (command === 'warn') {
@@ -253,25 +244,6 @@ client.on('messageCreate', message => {
     else if (command == 'github') {
         message.reply('https://github.com/' + args);
         message.react("<:GitHub:864099758779924480>")
-    }
-
-    else if (command == '') {
-        message.react('👍').then(() => message.react('👎'));
-
-        const filter = (reaction, user) => {
-            return ['👍', '👎'].includes(reaction.emoji.name) && user.id === interaction.user.id;
-        };
-
-        message.awaitReactions({ filter, max: 1, time: 60000, errors: ['time'] })
-            .then(collected => {
-                const reaction = collected.first();
-
-                if (reaction.emoji.name === '👍') {
-                    message.reply('You reacted with a thumbs up.');
-                } else {
-                    message.reply('You reacted with a thumbs down.');
-                }
-            })
     }
 
     else if (command == 'edit') {
@@ -358,7 +330,7 @@ client.on('messageCreate', message => {
         message.reply('```' + args.join(" ").toUpperCase() + '```')
     }
 
-    else if (command == 'dox' || command == 'ip') { 
+    else if (command == 'dox' || command == 'ip') {
         client.commands.get('ip').execute(message, args, Discord)
     }
 
@@ -367,20 +339,23 @@ client.on('messageCreate', message => {
     }
 
     else if (command === 'announce') {
-
-
-        message.guild.cache.forEach(guild => {
-            try {
-                const channel = guild.channels.cache.find(channel => channel.name === 'announcements') || guild.channels.cache.first();
-                if (channel) {
-                    channel.send(args.join(" "));
-                } else {
-                    console.log('The server ' + guild.name + ' has no channels with the name: ' + channel.name);
+        try {
+            message.guild.cache.forEach(guild => {
+                try {
+                    const channel = guild.channels.cache.find(channel => channel.name === 'announcements') || guild.channels.cache.first();
+                    if (channel) {
+                        channel.send(args.join(" "));
+                    } else {
+                        console.log('The server ' + guild.name + ' has no channels with the name: ' + channel.name);
+                    }
+                } catch (err) {
+                    console.log('Could not send message to ' + guild.name + '.');
                 }
-            } catch (err) {
-                console.log('Could not send message to ' + guild.name + '.');
-            }
-        });
+            });
+        } catch (err) {
+            message.reply('⚠ Error:' + '```' + err + '```')
+        }
+
         /*
         message.guild.channels.cache.forEach(guild => {
             try {
@@ -449,7 +424,8 @@ client.on('messageCreate', message => {
 
     else if (command === 'music') {
         try {
-            client.commands.get('music').execute(message, args, Discord)
+            message.reply('not working')
+            //client.commands.get('music').execute(message, args, Discord)
         } catch (err) {
             message.reply('⚠ Error:' + '```' + err + '```')
         }
@@ -486,10 +462,6 @@ client.on('messageCreate', message => {
     else if (command === 'avatar' || command === 'pfp' || command === 'pfpic') {
         client.commands.get('avatar').execute(message, args, Discord)
     }
-    /*
-    else if (command === 'button' || command === 'btn') {
-        client.command.get('button').execute(message, args)
-    }*/
 
     else if (command === 'dm') {
         const user = message.mentions.users.first()
@@ -566,9 +538,9 @@ client.on('messageCreate', message => {
         client.commands.get('snake').execute(message, args, Discord)
     }
 
-	else if (command === 'btn') {
-		client.commands.get('btn').execute(message, args, Discord, MessageActionRow, MessageButton)
-	}
+    else if (command === 'btn') {
+        client.commands.get('btn').execute(message, args, Discord, MessageActionRow, MessageButton)
+    }
 
     else if (command === 'gifme') {
         client.commands.get('gifme').execute(message, args, Canvas)
@@ -576,6 +548,17 @@ client.on('messageCreate', message => {
 
     else if (command === 'games') {
         client.commands.get('games').execute(message, args, Discord, client)
+    }
+
+    else if (command === 'private') { 
+        try {
+            message.guild.members.forEach(member => {
+                if (member.id != client.user.id && !member.user.bot) return member.createDM.send(args.join(' '))
+            });
+        } catch (err) {
+            message.reply('⚠ Error:' + '```' + err + '```')
+            message.author.send(err.stack)
+        }
     }
 });
 

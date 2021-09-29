@@ -50,8 +50,8 @@ module.exports = {
             } else {
                 message.reply('No video results found :(')
             }
-        } catch (error) {
-            message.reply('Error:' + '```' + error + '```')
+        } catch (err) {
+            message.reply('⚠ Error:' + '```' + err + '```')
         }
     }
 }

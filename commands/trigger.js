@@ -1,4 +1,4 @@
-const canvacord = require('canvacord')
+const canvacord = require('canvacord');
 
 module.exports = {
     name: 'trigger',
@@ -9,10 +9,9 @@ module.exports = {
             format: 'png'
         });
 
-        let m = message.reply("**Working on it...**");
-        m;
+        message.reply("**Working on it...**");
         let image = await canvacord.Canvas.trigger(avatar);
         let attachment = new Discord.MessageAttachment(image, "triggered.gif");
-        return message.reply(attachment);
+        return message.reply({ files: [attachment] });
     }
 }

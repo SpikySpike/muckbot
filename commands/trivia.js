@@ -2,14 +2,14 @@ const { Trivia } = require('weky')
 
 module.exports = {
     name: 'trivia',
-    description: "ong trivia",
+    description: "Play trivia!",
     async execute(message, args) {
         await Trivia({
             message: message,
             embed: {
                 title: 'Trivia | MuckBot',
                 description: 'You only have **{{time}}** to guess the answer!',
-                color: '#5865F2',
+                color: 'RANDOM',
                 footer: '©️ MuckBot',
                 timestamp: true
             },

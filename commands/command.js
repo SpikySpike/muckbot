@@ -11,6 +11,6 @@ module.exports = {
         .setTimestamp()
         .setFooter('Test Footer!', 'https://discordjs.guide/meta-image.png')
         
-        message.channel.send({ embeds: [testEmbed]})
+        message.channel.send({ embeds: [testEmbed] })
     }
 }
