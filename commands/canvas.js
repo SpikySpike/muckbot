@@ -5,7 +5,10 @@ module.exports = {
     name: 'canvas',
     description: 'canvas image test',
     async execute(message, args, Discord, Canvas) {
-        let avatar = 'https://c.tenor.com/u9XnPveDa9AAAAAM/rick-rickroll.gif'
+        let avatar = message.author.displayAvatarURL({
+            dynamic: false,
+            format: 'png'
+        });
 
         async function createCanvas() {
             return new Canvas(800, 600)

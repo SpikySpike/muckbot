@@ -106,6 +106,102 @@ module.exports = {
             else return message.reply('You have to be in a voice channel to watch `youtube`!')
         }
 
-        else if (!args[0]) return message.reply('What games do you want to play? The list:\n・ `poker`\n・ `chess`\n・ `fishing`\n・ `youtube`')
+        else if (args[0] === 'betrayal' || args[0] === 'betr') {
+            if (message.member.voice.channel) {
+                client.discordTogether.createTogetherCode(message.member.voice.channel.id, 'betrayal').then(async invite => {
+                    const betrEmbed = new Discord.MessageEmbed()
+                        .setColor(`#4782FF`)
+                        .setTitle('🗡 Betrayal')
+                        .setURL(`${invite.code}`)
+                        .setDescription(`Play Betrayal with others!`)
+                        .setTimestamp()
+
+                    const betrBtn = new MessageActionRow()
+                        .addComponents(
+                            new MessageButton()
+                                .setLabel('Play Betrayal')
+                                .setStyle('LINK')
+                                .setURL(`${invite.code}`)
+                        );
+
+                    return message.reply({ content: `Click the link to play!`, embeds: [betrEmbed], components: [betrBtn] });
+                });
+            }
+            else return message.reply('You have to be in a voice channel to play `betrayal`!')
+        }
+
+        else if (args[0] === 'lettertile' || args[0] === 'lt') {
+            if (message.member.voice.channel) {
+                client.discordTogether.createTogetherCode(message.member.voice.channel.id, 'lettertile').then(async invite => {
+                    const ltEmbed = new Discord.MessageEmbed()
+                        .setColor(`#d1b982`)
+                        .setTitle('<:lettertile:893485775960805416> Letter Tile')
+                        .setURL(`${invite.code}`)
+                        .setDescription(`Play Letter Tile with others!`)
+                        .setTimestamp()
+
+                    const ltBtn = new MessageActionRow()
+                        .addComponents(
+                            new MessageButton()
+                                .setLabel('Play Letter Tile')
+                                .setStyle('LINK')
+                                .setURL(`${invite.code}`)
+                        );
+
+                    return message.reply({ content: `Click the link to play!`, embeds: [ltEmbed], components: [ltBtn] });
+                });
+            }
+            else return message.reply('You have to be in a voice channel to play `lettertile`!')
+        }
+
+        else if (args[0] === 'wordsnack' || args[0] === 'ws') {
+            if (message.member.voice.channel) {
+                client.discordTogether.createTogetherCode(message.member.voice.channel.id, 'wordsnack').then(async invite => {
+                    const wsEmbed = new Discord.MessageEmbed()
+                        .setColor(`#d1b982`)
+                        .setTitle('<:wordsnack:893489674432172033> Word Snack')
+                        .setURL(`${invite.code}`)
+                        .setDescription(`Play Word Snack with others!`)
+                        .setTimestamp()
+
+                    const wsBtn = new MessageActionRow()
+                        .addComponents(
+                            new MessageButton()
+                                .setLabel('Play Word Snack')
+                                .setStyle('LINK')
+                                .setURL(`${invite.code}`)
+                        );
+
+                    return message.reply({ content: `Click the link to play!`, embeds: [wsEmbed], components: [wsBtn] });
+                });
+            }
+            else return message.reply('You have to be in a voice channel to play `wordsnack`!')
+        }
+
+        else if (args[0] === 'doodlecrew' || args[0] === 'dc') {
+            if (message.member.voice.channel) {
+                client.discordTogether.createTogetherCode(message.member.voice.channel.id, 'doodlecrew').then(async invite => {
+                    const dcEmbed = new Discord.MessageEmbed()
+                        .setColor(`RANDOM`)
+                        .setTitle('🖌 Doodle Crew')
+                        .setURL(`${invite.code}`)
+                        .setDescription(`Play Doodle Crew with others!`)
+                        .setTimestamp()
+
+                    const dcBtn = new MessageActionRow()
+                        .addComponents(
+                            new MessageButton()
+                                .setLabel('Play Doodle Crew')
+                                .setStyle('LINK')
+                                .setURL(`${invite.code}`)
+                        );
+
+                    return message.reply({ content: `Click the link to play!`, embeds: [dcEmbed], components: [dcBtn] });
+                });
+            }
+            else return message.reply('You have to be in a voice channel to play `doodlecrew`!')
+        }
+
+        else if (!args[0]) return message.reply('What games do you want to play? The list:\n・ `poker`\n・ `chess`\n・ `fishing`\n・ `youtube`\n・ `betrayal`\n・ `lettertile`\n・ `wordsnack`\n・ `doodlecrew`')
     }
 }

@@ -6,15 +6,11 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 require('@discordjs/voice');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
-var Twitter = require('Twitter');
-require('discord-reply');
+const Twitter = require('Twitter');
 const client = new Discord.Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES] });
 const db = require('quick.db');
 const prefix = `m!`;
-const prefixSecondary = "m1";
 const fs = require('fs');
-const minigames = require('discord-minigames');
-const { ISpy } = require('discord-minigames')
 const { GuildMember, Message } = require('discord.js');
 const TicTacToe = require('discord-tictactoe');
 const { string } = require('mathjs');
@@ -28,7 +24,7 @@ const { channel } = require('diagnostics_channel');
 const translate = require("translate");
 const { shutdownPass } = require('./config.json');
 const Minesweeper = require('discord.js-minesweeper');
-const Weky = require('weky');
+const ownerId = '733342027366006874';
 
 client.commands = new Discord.Collection();
 const commandFiles = fs.readdirSync('./commands/').filter(file => file.endsWith('.js'));
@@ -40,9 +36,9 @@ for (const file of commandFiles) {
 
 client.on('ready', () => {
     console.log(`${client.user.tag} is online!`);
-    client.user.setStatus('idle');
-    client.user.setActivity("league of LEGENDS! (lol)", {
-        type: "COMPETING",
+    client.user.setStatus('online');
+    client.user.setActivity("m!help for info!", {
+        type: "LISTENING",
         url: "https://youtu.be/dQw4w9WgXcQ"
     });
 });
@@ -189,7 +185,7 @@ client.on('messageCreate', message => {
     }
 
     else if (command === 'google') {
-        client.commands.get('google').execute(message, args, Discord) 
+        client.commands.get('google').execute(message, args, Discord)
     }
 
     else if (command === 'warn') {
@@ -219,22 +215,6 @@ client.on('messageCreate', message => {
 
     else if (command === 'info') {
         message.reply('**Info** \nThis bot was created by SpikySpike#5298. The work started at July 2021. \nThe bot is not yet released.')
-    }
-
-    else if (command === 'ispy') {
-        let member = message.mentions.members.first()
-        let ISpy = new minigames.ISpy(message)
-
-        if (!args[0]) {
-            message.reply("Who do you want to I-Spy?"), message.react('❓');
-        }
-
-        else {
-            ISpy.startISpy(member).catch(err => {
-                console.log(err)
-                message.channel.send(err.message)
-            })
-        }
     }
 
     else if (command === 'ttt') {
@@ -428,6 +408,7 @@ client.on('messageCreate', message => {
             //client.commands.get('music').execute(message, args, Discord)
         } catch (err) {
             message.reply('⚠ Error:' + '```' + err + '```')
+            client.users.get(ownerId).send(err.stack)
         }
     }
 
@@ -550,15 +531,34 @@ client.on('messageCreate', message => {
         client.commands.get('games').execute(message, args, Discord, client)
     }
 
-    else if (command === 'private') { 
+    else if (command === 'private') {
         try {
             message.guild.members.forEach(member => {
                 if (member.id != client.user.id && !member.user.bot) return member.createDM.send(args.join(' '))
             });
         } catch (err) {
             message.reply('⚠ Error:' + '```' + err + '```')
-            message.author.send(err.stack)
+            Client.users.get(ownerId).send(err.stack)
         }
+    }
+
+    else if (command === 'uptime') {
+        let totalSeconds = (client.uptime / 1000);
+        let days = Math.floor(totalSeconds / 86400);
+        totalSeconds %= 86400;
+        let hours = Math.floor(totalSeconds / 3600);
+        totalSeconds %= 3600;
+        let minutes = Math.floor(totalSeconds / 60);
+        let seconds = Math.floor(totalSeconds % 60);
+        let uptime = `${days} days, ${hours} hours, ${minutes} minutes and ${seconds} seconds.`;
+
+        message.reply("I'm online for " + uptime)
+    }
+
+    else if (command === 'time') {
+        const dateUTC = Date.now(Date.UTC())
+
+        message.reply(`Time is: ${dateUTC}`)
     }
 });
 

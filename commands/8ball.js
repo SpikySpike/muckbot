@@ -1,31 +1,28 @@
 module.exports = {
     name: '8ball',
-    description: "8 balls omg",
+    description: "8ball no way",
     execute(message, args){
         if (!args[2]){
-            return message.channel.send("Please ask something!")
+            return message.reply("Please ask something!")
         }
         let number = Math.floor(Math.random() * 7);
         if (number == 0){
-            return message.channel.send("Yes, definitely so.")
+            return message.reply("Yes, definitely so.")
         }
         if (number == 1){
-            return message.channel.send("No, definitely not.")
+            return message.reply("No, definitely not.")
         }
         if (number == 2){
-            return message.channel.send("Ask again later.")
+            return message.reply("Ask again later.")
         }
         if (number == 3){
-            return message.channel.send("It is uncertain.")
+            return message.reply("It is uncertain.")
         }
         if (number == 4){
-            return message.channel.send("Odds are not in your favor.")
+            return message.reply("Odds are not in your favor.")
         }
         if (number == 5){
-            return message.channel.send("Odds are in your favor.")
-        } 
-        if (number == 6){
-            return message.channel.send("ask ur mom peasant :rofl: :point_right:")
+            return message.reply("Odds are in your favor.")
         }
     }
 }

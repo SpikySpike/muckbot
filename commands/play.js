@@ -6,7 +6,7 @@ const ytSearch = require('yt-search');
 module.exports = {
     name: 'play',
     description: 'Joins and plays a video from YouTube',
-    async execute(message, args, Discord) {
+    async execute(message, args, Discord, ownerId) {
         const voiceChannel = await message.member.voice.channel;
 
         if (!voiceChannel) return message.reply('You need to be in a voice channel to use this command!'), message.react("❌");
@@ -52,6 +52,7 @@ module.exports = {
             }
         } catch (err) {
             message.reply('⚠ Error:' + '```' + err + '```')
+            Client.users.get(ownerId).send(err.stack)
         }
     }
 }

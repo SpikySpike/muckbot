@@ -9,7 +9,6 @@ module.exports = {
             format: 'png'
         });
 
-        message.reply("**Working on it...**");
         let image = await canvacord.Canvas.trigger(avatar);
         let attachment = new Discord.MessageAttachment(image, "triggered.gif");
         return message.reply({ files: [attachment] });
