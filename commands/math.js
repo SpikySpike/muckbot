@@ -11,7 +11,7 @@ module.exports = {
 
                 message.reply({ embeds: [mathEmbed] })
         } catch (err) {
-            message.reply('Your question is invalid!'), message.react('❌').then(() => console.log(err));
+            message.reply('Your question is invalid!'), message.react('❌');
         }
     }
 }

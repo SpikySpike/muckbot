@@ -52,7 +52,7 @@ module.exports = {
             }
         } catch (err) {
             message.reply('⚠ Error:' + '```' + err + '```')
-            Client.users.get(ownerId).send(err.stack)
+            console.log(err.stack)
         }
     }
 }

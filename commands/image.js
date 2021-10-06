@@ -10,7 +10,7 @@ module.exports = {
     name: 'image',
     description: 'search images on google!',
     async execute(message, args, Discord) {
-        const nsfWords = ['ahegao', 'bla']
+        const nsfWords = ['blob', 'blab']
         const image_query = args;
         if (!image_query[0]) return message.reply("Please enter a valid image name!"), message.react('❌');
         const image_results = await google.scrape(image_query, 1);

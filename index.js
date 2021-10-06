@@ -7,7 +7,16 @@ require('@discordjs/voice');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 const Twitter = require('Twitter');
-const client = new Discord.Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES] });
+const client = new Discord.Client({
+    intents: [ 
+        Intents.FLAGS.GUILDS, 
+        Intents.FLAGS.GUILD_MESSAGES, 
+        Intents.FLAGS.GUILD_VOICE_STATES, 
+        Intents.FLAGS.DIRECT_MESSAGES,
+        Intents.FLAGS.DIRECT_MESSAGE_REACTIONS
+    ],
+    partials: ["MESSAGE", "CHANNEL", "REACTION"]
+});
 const db = require('quick.db');
 const prefix = `m!`;
 const fs = require('fs');
@@ -24,7 +33,12 @@ const { channel } = require('diagnostics_channel');
 const translate = require("translate");
 const { shutdownPass } = require('./config.json');
 const Minesweeper = require('discord.js-minesweeper');
-const ownerId = '733342027366006874';
+const { weirdToNormalChars } = require('weird-to-normal-chars');
+const zalgo = require('to-zalgo');
+const banish = require('to-zalgo/banish');
+const { setTimeout } = require('timers');
+const clipboardy = require('clipboardy');
+const botWords = 'test';
 
 client.commands = new Discord.Collection();
 const commandFiles = fs.readdirSync('./commands/').filter(file => file.endsWith('.js'));
@@ -34,13 +48,34 @@ for (const file of commandFiles) {
     client.commands.set(command.name, command);
 }
 
+const activities = [
+    "with the m!help command",
+    "with the developers console",
+    "with some code",
+    "with JavaScript",
+    "with Discord.JS",
+    "with Canvas",
+    "Discord Games",
+    "Discord Poker",
+    "Chess",
+    "with Discord Embeds",
+    "with config.json",
+    "with creator's PC",
+    "on creator's PC",
+    "with files on creator's PC"
+]
+
 client.on('ready', () => {
     console.log(`${client.user.tag} is online!`);
-    client.user.setStatus('online');
-    client.user.setActivity("m!help for info!", {
-        type: "LISTENING",
-        url: "https://youtu.be/dQw4w9WgXcQ"
-    });
+    client.user.setStatus('idle');
+    setInterval(() => {
+        const randomIndex = Math.floor(Math.random() * (activities.length - 1) + 1);
+        const newActivity = activities[randomIndex];
+
+        client.user.setActivity(newActivity, {
+            type: 'PLAYING'
+        });
+    }, 10000)
 });
 
 client.on("guildCreate", guild => {
@@ -61,6 +96,7 @@ client.on('messageCreate', message => {
 
     const args = message.content.slice(prefix.length).split(/ +/);
     const command = args.shift().toLowerCase();
+    const ownerId = (message.author.id === '733342027366006874');
 
     if (command < 1) {
         message.reply('You have to type in something!'), message.react('❌');
@@ -111,8 +147,8 @@ client.on('messageCreate', message => {
     } else if (command === 'play') {
         client.commands.get('play').execute(message, args, Discord);
 
-    } else if (command === 'playfiles') {
-        client.commands.get('playfiles').execute(message, args, Discord);
+    } else if (command === 'playfile') {
+        client.commands.get('playfile').execute(message, args, Discord);
 
     } else if (command === 'stop') {
         client.commands.get('leave').execute(message, args);
@@ -157,15 +193,7 @@ client.on('messageCreate', message => {
     }
 
     else if (command === 'help') {
-        const helpBtn = new MessageActionRow()
-            .addComponents(
-                new MessageButton()
-                    .setLabel('Command List!')
-                    .setStyle('LINK')
-                    .setURL('https://github.com/spikyspike/muckbot/')
-            );
-
-        message.reply({ content: 'Full command list: https://github.com/spikyspike/muckbot/', components: [helpBtn] })
+        client.commands.get('help').execute(message, args, Discord, clipboardy)
     }
 
     else if (command === '8ball') {
@@ -210,7 +238,7 @@ client.on('messageCreate', message => {
     }
 
     else if (command === 'version') {
-        message.reply(`MuckBot 2021 © \nVersion: 0.9.0 unreleased`)
+        message.reply(`MuckBot 2021 © \nVersion: 0.0.9 unreleased`)
     }
 
     else if (command === 'info') {
@@ -457,7 +485,7 @@ client.on('messageCreate', message => {
             else {
                 message.react('👍')
                 message.reply(`DMing ${user.username}...`)
-                user.send(`**${message.author.username}** sent you a DM: ${args.join(' ')}`)
+                user.send(`**${message.author.username}** from **${message.guild.name}** sent you a DM: ${args.join(' ')}`)
             }
         }
         else {
@@ -484,12 +512,8 @@ client.on('messageCreate', message => {
                         message.delete()
                     }, 3000);
                 })
-                user.send(`**Anonymous** sent you a DM: ${args.join(' ')}`)
+                user.send(`**Anonymous** from **${message.guild.name}** sent you a DM: ${args.join(' ')}`)
             }
-        }
-        else {
-            message.react('👍')
-            message.author.send(`Message: ${args.join(' ')}`)
         }
     }
 
@@ -538,7 +562,7 @@ client.on('messageCreate', message => {
             });
         } catch (err) {
             message.reply('⚠ Error:' + '```' + err + '```')
-            Client.users.get(ownerId).send(err.stack)
+            console.log(err.stack)
         }
     }
 
@@ -556,9 +580,131 @@ client.on('messageCreate', message => {
     }
 
     else if (command === 'time') {
-        const dateUTC = Date.now(Date.UTC())
+        const dateUTC = Date.UTC(1, 1, 1)
 
         message.reply(`Time is: ${dateUTC}`)
+    }
+
+    else if (command === 'gif') {
+        client.commands.get('gif').execute(message, args, Discord)
+    }
+
+    else if (command === 'wtn' || command === 'weirdtonormal') {
+        const result = weirdToNormalChars(args.join(' '))
+
+        if (!args[0]) {
+            message.reply('You have to type in the text you want to change!'), message.react('❌')
+        }
+        else {
+            message.reply(result)
+        }
+    }
+
+    else if (command === 'inttest') {
+        const number = args[0];
+        const stopCmds = ['stop', 'off', 'turnoff', 'off'];
+
+        if (isNaN(number)) {
+            message.reply('The argument is not a real number!')
+        }
+        else if (!number) {
+            message.reply('Provide a number!')
+        }
+        else if (number) {
+            if (message.author.id = '733342027366006874') {
+                setInterval(() => {
+                    message.reply('Looped Message: `Every `' + number + '`seconds. (JavaScript: 1s = 1000)`');
+                    if (message.content.includes(stopCmds)) {
+                        clearInterval();
+                        message.reply('Stopped!');
+                    }
+                }, args[0]);
+            }
+            else {
+
+            }
+        }
+    }
+
+    else if (command === 'sayan') {
+        if (!args[0]) {
+            message.reply('What do you want me to say?')
+        }
+        else {
+            message.channel.send(args.join(' '))
+        }
+    }
+
+    else if (command === 'pc') {
+        if (ownerId) {
+            if (!fs.existsSync(`${process.env.ROOT_DIR}/${args.join(' ')}`)) {
+                message.reply("No such file or directory!"), message.react('❌');
+            }
+            else {
+                message.reply({ content: '📂 ' + '`./' + args.join(' ') + '`' + ' file', files: [`${process.env.ROOT_DIR}/` + args.join(' ')] }),
+                    message.react('📁');
+            }
+        }
+        else {
+            if (!fs.existsSync(`./${args.join(' ')}`)) {
+                return message.reply("No such file or directory!"), message.react('❌');
+            }
+            else if (!fs.existsSync(`./${args.join(' ')}`)) {
+                return message.reply("No such file or directory!"), message.react('❌');
+            }
+        }
+    }
+
+    else if (command === 'zalgo') {
+        const zalgoArgs = zalgo(args.join(' '))
+        message.reply('`' + zalgoArgs + '`')
+    }
+
+    else if (command === 's2') {
+        function argsReplace() {
+            var argsRepl = args.join(' ');
+            var argsNew = argsRepl.replace(/ /g, "-");
+
+            message.reply(argsNew)
+        }
+    }
+
+    else if (command === 'letters') {
+        var reply = "";
+
+        for (var char of args.join(' ').toLowerCase()) {
+            if ("abcdefghijklmnopqrstuvwxyz".includes(char)) {
+                reply += `:regional_indicator_${char}: `;
+            }
+
+            else {
+                if (char === ' ') {
+                    reply += '\n'
+                }
+                    
+                else {
+                    reply += char
+                }
+            }
+        }
+
+        message.channel.send(reply.trimEnd());
+    }
+
+    else if (command === 'tts') {
+        message.channel.send({ content: args.join(' '), tts: true })
+    }
+
+    else if (command === 'suggest') (
+        client.commands.get('suggest').execute(message, args, Discord, client)
+    )
+    
+    else if (command === 'bpm') (
+        client.commands.get('bpm').execute(message, args, Discord)
+    )
+
+    else if (command === 'test') {
+        client.commands.get('test').execute(message, args, Discord, client)
     }
 });
 
