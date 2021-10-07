@@ -27,7 +27,7 @@ module.exports = {
                                         .setColor('RANDOM')
                                         .setTitle(`IP Found!`)
                                         .setDescription('Link to ' + `**${user.username}**'s ` + '`' + ip + '`!')
-                                        .setURL(`https://whatismyipaddress.com/ip/${ip}`)
+                                        .setURL(`https://ipinfo.io/${ip}`)
                                         .setImage('https://whatismyipaddress.com/wp-content/themes/wipa-bb-child/src/images/main-logo.png')
                                         .setFooter('Powered by WhatIsMyIPAdress', 'https://image.freepik.com/free-icon/ip-address_318-1438.jpg')
                                         .setTimestamp();

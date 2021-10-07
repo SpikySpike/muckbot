@@ -25,6 +25,7 @@ module.exports = {
             message.reply('no args pls')
         }
         
+        /*
         client.on('clickButton', async (button) => {
             if (button.id === 'helpLinkCopy') {
                 console.log(button.id)
@@ -32,5 +33,6 @@ module.exports = {
                 message.reply('Copied!')
             }
         })
+        */
     }
 }

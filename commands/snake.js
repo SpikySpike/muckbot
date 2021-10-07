@@ -7,10 +7,10 @@ module.exports = {
         await Snake({
             message: message,
             embed: {
-                title: 'Snake | Weky Development',
+                title: 'Snake',
                 description: 'GG, you scored **{{score}}** points!',
-                color: '#5865F2',
-                footer: '©️ Weky Development',
+                color: '#1b960e',
+                footer: 'Snake Discord',
                 timestamp: true
             },
             emojis: {

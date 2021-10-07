@@ -14,7 +14,8 @@ module.exports = {
         const chessColors = ['#FFFFFF', '#000000'];
         const chessColorRandom = chessColors[Math.floor(Math.random() * chessColors.length)];
         const gamesAll = [
-            'poker', 'chess', 
+            'poker', 'pokernight',
+            'chess', 'parkchess',
             'fishington', 'fishing', 'fish', 
             'youtube', 'yt', 
             'betrayal', 'betr', 
@@ -22,9 +23,10 @@ module.exports = {
             'wordsnack', 'ws',
             'doodlecrew', 'dc'
         ];
+        const note = "\n\n\n**Note:** These games can only be played on a PC, and require Voice Channels!";
 
         try {
-            if (args[0] === 'poker') {
+            if (args[0] === 'poker' || args[0] === 'pokernight') {
                 if (message.member.voice.channel) {
                     client.discordTogether.createTogetherCode(message.member.voice.channel.id, 'poker').then(async invite => {
                         const pokerEmbed = new Discord.MessageEmbed()
@@ -49,7 +51,7 @@ module.exports = {
                 else return message.reply('You have to be in a voice channel to play `poker`!')
             }
     
-            else if (args[0] === 'chess') {
+            else if (args[0] === 'chess' || args[0] === 'parkchess') {
                 if (message.member.voice.channel) {
                     client.discordTogether.createTogetherCode(message.member.voice.channel.id, 'chess').then(async invite => {
                         const chessEmbed = new Discord.MessageEmbed()
@@ -128,7 +130,7 @@ module.exports = {
                 if (message.member.voice.channel) {
                     client.discordTogether.createTogetherCode(message.member.voice.channel.id, 'betrayal').then(async invite => {
                         const betrEmbed = new Discord.MessageEmbed()
-                            .setColor(`#4782FF`)
+                            .setColor(`#ff3b3b`)
                             .setTitle('🔪 Betrayal')
                             .setURL(`${invite.code}`)
                             .setDescription(`Play Betrayal with others!`)
@@ -224,7 +226,11 @@ module.exports = {
                 else return message.reply('You have to be in a voice channel to play `doodlecrew`!')
             }
     
-            else if (!args[0] || args[0] != gamesAll) return message.reply('What games do you want to play? The list:\n・ `poker`\n・ `chess`\n・ `fishington`\n・ `youtube`\n・ `betrayal`\n・ `lettertile`\n・ `wordsnack`\n・ `doodlecrew`')    
+            else if (!args[0] || args[0] != gamesAll) return message.reply(
+                'What games do you want to play? The list:\n' + 
+                '・ `poker`\n・ `chess`\n・ `fishington`\n・ `youtube`\n・ `betrayal`\n・ `lettertile`\n・ `wordsnack`\n・ `doodlecrew`' +
+                note
+            )    
         } catch (err) {
             message.reply('⚠ Error:' + '```' + err + '```')
         }

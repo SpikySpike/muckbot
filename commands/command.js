@@ -1,16 +1,15 @@
+const { commands } = require("npm");
+
 module.exports = {
-    name: 'command',
-    description: "Embeds!",
-    execute(message, args, Discord){
-        const testEmbed = new Discord.MessageEmbed()
-        .setColor('#ffffff')
-        .setTitle('Test Embed!')
-        .setURL('https://www.youtube.com/watch?v=dQw4w9WgXcQ')
-        .setDescription('Test Description!')
-        .setAuthor(message.author.tag, message.author.displayAvatarURL({ dynamic: true }))
-        .setTimestamp()
-        .setFooter('Test Footer!', 'https://discordjs.guide/meta-image.png')
-        
-        message.channel.send({ embeds: [testEmbed] })
+    name: "command",
+    description: "description",
+    execute(message, args, command, Discord) {
+        for (let i = 0; i < command.length; i++) {
+            const cmdList = command.name[i];
+
+            message.reply('```' + JSON.stringify({ cmdList }) + '```')
+        }
+
+        message.reply(command.name)
     }
 }

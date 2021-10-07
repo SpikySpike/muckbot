@@ -7,10 +7,10 @@ module.exports = {
         await Trivia({
             message: message,
             embed: {
-                title: 'Trivia | MuckBot',
+                title: 'Trivia',
                 description: 'You only have **{{time}}** to guess the answer!',
                 color: 'RANDOM',
-                footer: '©️ MuckBot',
+                footer: 'Trivia Discord',
                 timestamp: true
             },
             difficulty: 'hard',

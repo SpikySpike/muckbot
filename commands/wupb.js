@@ -7,10 +7,10 @@ module.exports = {
         await WillYouPressTheButton({
             message: message,
             embed: {
-                title: 'Will you press the button? | MuckBot',
+                title: 'Will you press the button?',
                 description: '```{{statement1}}```\n**but**\n\n```{{statement2}}```',
                 color: 'RANDOM',
-                footer: '©️ MuckBot',
+                footer: 'WUPB Discord',
                 timestamp: true
             },
             button: { yes: 'Yes', no: 'No' },
