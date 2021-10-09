@@ -19,7 +19,10 @@ module.exports = {
             );
 
         if (!args[0]) {
-            message.reply({ content: "What type of cmds?\n・ `fun`\n・ `util`\n・ `misc`", components: [helpBtn] })
+            message.reply({
+                content: "What type of cmds?\n・ `fun`\n・ `util`\n・ `misc`",
+                components: [helpBtn]
+            })
         }
         else {
             message.reply('no args pls')

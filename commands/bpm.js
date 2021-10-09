@@ -17,6 +17,6 @@ module.exports = {
         else {
             message.reply('no')
         }*/
-        message.reply('Command in progress!')
+        message.reply('Command is still in progress!')
     }
 }

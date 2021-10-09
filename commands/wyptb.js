@@ -1,7 +1,7 @@
 const { WillYouPressTheButton } = require('weky')
 
 module.exports = {
-    name: 'wupb',
+    name: 'wyptb',
     description: "wupb?!?!?",
     async execute(message, args) {
         await WillYouPressTheButton({
@@ -10,7 +10,7 @@ module.exports = {
                 title: 'Will you press the button?',
                 description: '```{{statement1}}```\n**but**\n\n```{{statement2}}```',
                 color: 'RANDOM',
-                footer: 'WUPB Discord',
+                footer: 'WYPTB Discord',
                 timestamp: true
             },
             button: { yes: 'Yes', no: 'No' },

@@ -31,16 +31,13 @@ const game = new TicTacToe({ language: 'en' });
 const { balances } = require("./balances.json");
 const { Emoji } = require('discord.js');
 const { channel } = require('diagnostics_channel');
-const translate = require("translate");
 const { shutdownPass } = require('./config.json');
 const Minesweeper = require('discord.js-minesweeper');
 const { weirdToNormalChars } = require('weird-to-normal-chars');
 const zalgo = require('to-zalgo');
-const banish = require('to-zalgo/banish');
 const { setTimeout } = require('timers');
 const clipboardy = require('clipboardy');
-const { error, timeStamp } = require('console');
-const botWords = 'test';
+const ms = require('ms')
 
 client.commands = new Discord.Collection();
 const commandFiles = fs.readdirSync('./commands/').filter(file => file.endsWith('.js'));
@@ -90,8 +87,9 @@ client.on('ready', () => {
     muckChannel.send({ embeds: [readyEmbed] });
 });
 
-client.on("guildCreate", guild => {
-    guild.channels.cache.find(channel => channel.name === 'general').send(`Thanks for adding me to your server! You can use ${defaultPrefix}help to find commands! 💖`);
+client.on("guildCreate", (guild) => {
+    const guildChannel = guild.channels.cache.find(channel => channel.name === 'general');
+    guildChannel.send(`Thanks for adding me to your server! You can use ${defaultPrefix}help to find commands! 💖`);
     console.log(`New guild joined: ${guild.name} (id: ${guild.id}). This guild has ${guild.memberCount} members!`);
 });
 
@@ -116,6 +114,16 @@ client.on('guildMemberRemove', (member) => {
     console.log(`${member.user.tag} left the ${guild.name} server.`)
 });
 
+// client.on('channelCreate', (guild) => {
+//     const auditLogNames = ["audit-log", "auditlog", "audit", "changelog"];
+//     const auditLogChannel = guild.channels.cache.get(channel => channel.name.includes(auditLogNames.length));
+//     const channelName = member.mentions.channels.first();
+//     const channelNameId = channelName.id;
+
+//     auditLogChannel.send(`Channel Created: <#${channelNameId}>`);
+//     console.log('channelCreate works!')
+// });
+
 client.on('messageCreate', message => {
     let muckServer = client.guilds.cache.get('887353786094481428');
     let muckChannel = muckServer.channels.cache.get('887371661492494406');
@@ -125,6 +133,7 @@ client.on('messageCreate', message => {
     const args = message.content.slice(defaultPrefix.length).split(/ +/);
     const command = args.shift().toLowerCase();
     const ownerId = (message.author.id === '733342027366006874');
+    const ownerId2 = ('733342027366006874')
 
     if (command < 1) {
         message.reply('You have to type in something!'), message.react('❌');
@@ -156,6 +165,9 @@ client.on('messageCreate', message => {
 
     } else if (command === 'ban') {
         client.commands.get('ban').execute(message, args, Discord);
+
+    } else if (command === 'mute') {
+        client.commands.get('mute').execute(message, args, Discord, ms);
 
     } else if (command == 'twitter' || command === 'twt') {
         message.reply('https://twitter.com/' + args);
@@ -369,17 +381,7 @@ client.on('messageCreate', message => {
     }
 
     else if (command === 'ccreate') {
-        if (message.member.permissions.has('ADMINISTRATOR')) {
-            message.guild.channels.create(args, {
-                type: 'GUILD_TEXT',
-                reason: 'new channel',
-                nsfw: true,
-            })
-        }
-
-        else if (!message.member.permissions.has('ADMINISTRATOR')) {
-            message.reply("You don't have right permissions to create channels!")
-        }
+        client.commands.get('ccreate').execute(message, args, Discord)
     }
 
     else if (command === '') {
@@ -406,21 +408,18 @@ client.on('messageCreate', message => {
         }
     }
 
-    else if (command === 'translate') {
-        client.commands.get('translate').execute(message, args, Discord, translate)
-    }
-
-    else if (command === '') {
+    else if (command === 'rdsg') {
         client.commands.get('rdsg').execute(message, args, Discord)
     }
 
     else if (command === 'music') {
         try {
             message.reply('not working')
+            client.users.get(ownerId2).send(err.stack)
             //client.commands.get('music').execute(message, args, Discord)
         } catch (err) {
             message.reply('⚠ Error:' + '```' + err + '```')
-            client.users.get(ownerId).send(err.stack)
+            client.users.get(ownerId2).send(err.stack)
         }
     }
 
@@ -504,7 +503,7 @@ client.on('messageCreate', message => {
     else if (command === 'minesweeper' || command === 'ms') {
         const minesweeper = new Minesweeper();
         minesweeper.start();
-        message.reply('This command is in progress!'), message.react(':gear:')
+        message.reply('This command is in progress!'), message.react('⚙️')
     }
 
     else if (command === 'calculator' || command === 'calc') {
@@ -515,8 +514,8 @@ client.on('messageCreate', message => {
         client.commands.get('fight').execute(message, args, Discord)
     }
 
-    else if (command === 'wupb') {
-        client.commands.get('wupb').execute(message, args, Discord)
+    else if (command === 'wyptb') {
+        client.commands.get('wyptb').execute(message, args, Discord)
     }
 
     else if (command === 'trivia') {
@@ -525,6 +524,14 @@ client.on('messageCreate', message => {
 
     else if (command === 'snake') {
         client.commands.get('snake').execute(message, args, Discord)
+    }
+
+    else if (command === 'fasttype' || command === 'ft') {
+        client.commands.get('fasttype').execute(message, args, Discord)
+    }
+
+    else if (command === 'wyr') {
+        client.commands.get('wyr').execute(message, args, Discord)
     }
 
     else if (command === 'btn') {
@@ -564,9 +571,9 @@ client.on('messageCreate', message => {
     }
 
     else if (command === 'time') {
-        const dateUTC = Date.UTC(1, 1, 1)
+        var london = moment.tz("Europe/London").format('ha z')
 
-        message.reply(`Time is: ${dateUTC}`)
+        message.reply(`Time is: ${london}`)
     }
 
     else if (command === 'gif') {
@@ -626,7 +633,10 @@ client.on('messageCreate', message => {
                 message.reply("No such file or directory!"), message.react('❌');
             }
             else {
-                message.reply({ content: '📂 ' + '`./' + args.join(' ') + '`' + ' file', files: [`${process.env.ROOT_DIR}/` + args.join(' ')] }),
+                message.reply({
+                    content: '📂 ' + '`./' + args.join(' ') + '`' + ' file',
+                    files: [`${process.env.ROOT_DIR}/` + args.join(' ')]
+                }),
                     message.react('📁');
             }
         }
@@ -641,8 +651,18 @@ client.on('messageCreate', message => {
     }
 
     else if (command === 'zalgo') {
-        const zalgoArgs = zalgo(args.join(' '))
-        message.reply('`' + zalgoArgs + '`')
+        const zalgoArgs = zalgo(args.join(' '));
+        const zalgoNoTick = zalgo();
+        const userMent = message.mentions.users.first();
+        if (!args[0]) {
+            message.reply(zalgoNoTick)
+        }
+        else if (userMent) {
+            message.reply(zalgo('   you cant tag people   '))
+        }
+        else {
+            message.reply('`' + zalgoArgs + '`')
+        }
     }
 
     else if (command === 's2') {
@@ -677,7 +697,11 @@ client.on('messageCreate', message => {
     }
 
     else if (command === 'tts') {
-        message.channel.send({ content: args.join(' '), tts: true })
+        message.channel.send({ content: args.join(' '), tts: true }).then(async msg => {
+            setTimeout(() => {
+                msg.delete();
+            }, 10000);
+        })
     }
 
     else if (command === 'suggest') (
@@ -693,20 +717,22 @@ client.on('messageCreate', message => {
     }
 
     else if (command === 'epicmeme') {
-        message.channel.send('Roses are red')
+        message.channel.send('Roses are red...')
         setTimeout(() => {
-            message.channel.send('Violets are blue')
+            message.channel.send('Violets are blue...')
             setTimeout(() => {
-                message.channel.send('Unexpected `{` in ./index.js:32:14')
+                message.channel.send('Unexpected `{` on line 32.')
             }, 1000);
         }, 1000);
     }
 
-    else if (command === 'debug') {
-        if (ownerId) {
-            message.reply('Debugging...')
-            console.debug()
-        }
+    else if (command === 'generate' || command === 'gener') {
+        client.commands.get('generate').execute(message, args)
+    }
+
+    else if (command === 'bdc') {
+        message.reply(['cat', 'poo', 'epic trol'].join('+'))
+        
     }
 })
 

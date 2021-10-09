@@ -1,15 +1,21 @@
-const { commands } = require("npm");
-
 module.exports = {
     name: "command",
     description: "description",
-    execute(message, args, command, Discord) {
-        for (let i = 0; i < command.length; i++) {
-            const cmdList = command.name[i];
-
-            message.reply('```' + JSON.stringify({ cmdList }) + '```')
-        }
-
-        message.reply(command.name)
+    execute(message, args, Discord) {
+        const cmdEmbed = new Discord.MessageEmbed()
+            .setColor('#0099ff')
+            .setTitle('title')
+            .setURL('https://discord.js.org/')
+            .setAuthor('name', 'https://i.imgur.com/wSTFkRM.png', 'https://discord.js.org')
+            .setDescription('description')
+            .setThumbnail('https://i.imgur.com/wSTFkRM.png')
+            .addFields(
+                { name: 'title', value: 'value', inline: false },
+            )
+            .setImage('https://i.imgur.com/wSTFkRM.png')
+            .setTimestamp('timestamp')
+            .setFooter('footer', 'https://i.imgur.com/wSTFkRM.png');
+        
+            message.reply({ embeds: [cmdEmbed] });
     }
 }
