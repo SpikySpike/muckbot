@@ -1,9 +1,11 @@
+const { MessageActionRow, MessageButton } = require('discord.js');
+
 module.exports = {
     name: 'ip',
     description: "dox someone!! (cool)",
     execute(message, args, Discord) {
 
-        if (args.includes("@everyone")) return message.reply("You can't dox everyone");
+        if (args.includes("@everyone") || args.includes("everyone")) return message.reply("You can't dox everyone! Dummy...");
 
         let user = message.mentions.users.first();
         let ip = (Math.floor(Math.random() * 255) + 1) + "." + (Math.floor(Math.random() * 255)) + "." + (Math.floor(Math.random() * 255)) + "." + (Math.floor(Math.random() * 255));
@@ -32,7 +34,21 @@ module.exports = {
                                         .setFooter('Powered by WhatIsMyIPAdress', 'https://image.freepik.com/free-icon/ip-address_318-1438.jpg')
                                         .setTimestamp();
 
-                                    sentMessage.edit({ content: `<@${user.id}>'s IP address is: ` + '`' + ip + '`', embeds: [ipEmbed] })
+                                    const ipBtn = new MessageActionRow()
+                                        .addComponents(
+                                            new MessageButton()
+                                                .setLabel('Open Link')
+                                                .setStyle('LINK')
+                                                .setEmoji('🔗')
+                                                .setURL(`https://ipinfo.io/${ip}`)
+                                        );
+
+                                    sentMessage.edit({ 
+                                        content: `<@${user.id}>'s IP address is: ` + 
+                                        '`' + ip + '`', embeds: [ipEmbed],
+                                        components: [ipBtn]
+                                 
+                                })
                                 }, 1000)
                             })
                     }, 3000)

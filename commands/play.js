@@ -33,9 +33,9 @@ module.exports = {
             if (video) {
                 const stream = ytdl(video.url, { filter: 'audioonly' });
                 connection.play(stream, { seek: 0, volume: 1 })
-                    .on('finish', () => {
-                        voiceChannel.leave();
-                    });
+                .on('finish', () => {
+                    voiceChannel.leave();
+                });
     
                 const videoEmbed = new Discord.MessageEmbed()
                     .setColor('RANDOM')

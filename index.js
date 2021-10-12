@@ -2,34 +2,26 @@ const Discord = require('discord.js');
 const google = require('google');
 const { Canvas } = require('canvas-constructor/skia')
 const { Client, Intents, MessageActionRow, MessageButton } = require('discord.js');
-const { SlashCommandBuilder } = require('@discordjs/builders');
+const mongoose = require('mongoose')
 require('@discordjs/voice');
-const { REST } = require('@discordjs/rest');
-const { Routes } = require('discord-api-types/v9');
-const Twitter = require('Twitter');
 const client = new Discord.Client({
     intents: [
         Intents.FLAGS.GUILDS,
+        Intents.FLAGS.GUILD_MEMBERS,
         Intents.FLAGS.GUILD_MESSAGES,
         Intents.FLAGS.GUILD_VOICE_STATES,
         Intents.FLAGS.DIRECT_MESSAGES,
         Intents.FLAGS.DIRECT_MESSAGE_REACTIONS
     ],
-    partials: ["MESSAGE", "CHANNEL", "REACTION"]
+    partials: ["MESSAGE", "CHANNEL", "REACTION", "USER", "GUILD_MEMBER"]
 });
-const cooldowns = new Discord.Collection();
-const db = require('quick.db');
-const defaultPrefix = `m!`;
+const prefix = `m!`;
 const fs = require('fs');
-const { GuildMember, Message } = require('discord.js');
 const TicTacToe = require('discord-tictactoe');
 const { string } = require('mathjs');
 const math = require('mathjs')
-const tweet = require('./commands/tweet');
 const dotenv = require('dotenv').config();
 const game = new TicTacToe({ language: 'en' });
-const { balances } = require("./balances.json");
-const { Emoji } = require('discord.js');
 const { channel } = require('diagnostics_channel');
 const { shutdownPass } = require('./config.json');
 const Minesweeper = require('discord.js-minesweeper');
@@ -37,9 +29,34 @@ const { weirdToNormalChars } = require('weird-to-normal-chars');
 const zalgo = require('to-zalgo');
 const { setTimeout } = require('timers');
 const clipboardy = require('clipboardy');
-const ms = require('ms')
+const ms = require('ms');
+const { Collection } = require('discord.js');
+const Timeout = new Collection();
+const db = require('mongoose');
+const prefixSchema = require('./events/models/prefixSchema')
+
+client.prefix = async function (message) {
+    let custom;
+
+    const data = await prefixSchema.findOne({ Guild: message.guild.id })
+        .catch(err => console.log(err))
+
+    if (data) {
+        custom = data.Prefix;
+    } else {
+        custom = prefix;
+    }
+    return custom;
+}
+
 
 client.commands = new Discord.Collection();
+client.events = new Discord.Collection();
+
+// ['commandHandler', 'eventHandler'].forEach(handler => {
+//     require(`./handlers/${handler}`)(client, Discord)
+// })
+
 const commandFiles = fs.readdirSync('./commands/').filter(file => file.endsWith('.js'));
 for (const file of commandFiles) {
     const command = require(`./commands/${file}`);
@@ -83,15 +100,33 @@ client.on('ready', () => {
     }, 10000)
 
     let muckServer = client.guilds.cache.get('887353786094481428');
-    let muckChannel = muckServer.channels.cache.get('887371661492494406');
-    muckChannel.send({ embeds: [readyEmbed] });
+    let muckChannelReady = muckServer.channels.cache.get('887371661492494406');
+    muckChannelReady.send({ embeds: [readyEmbed] });
 });
+
+
+
+mongoose
+    .connect(process.env.MONGODB_SRV, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    })
+    .then(() => {
+        console.log('Connected to the DiscordJS Database!')
+    })
+    .catch((err) => {
+        console.log(err)
+    });
+
+
 
 client.on("guildCreate", (guild) => {
     const guildChannel = guild.channels.cache.find(channel => channel.name === 'general');
-    guildChannel.send(`Thanks for adding me to your server! You can use ${defaultPrefix}help to find commands! 💖`);
+    guildChannel.send(`Thanks for adding me to your server! You can use ${prefix}help to find commands! 💖`);
     console.log(`New guild joined: ${guild.name} (id: ${guild.id}). This guild has ${guild.memberCount} members!`);
 });
+
+
 
 client.on('guildMemberAdd', (member) => {
     const welcomeRole = member.guild.roles.cache.find(role => role.name === 'Member');
@@ -100,7 +135,18 @@ client.on('guildMemberAdd', (member) => {
     member.roles.add(welcomeRole);
     const welcomeChat = member.guild.channels.cache.get(channel => channel.name === "welcome")
     welcomeChat.send(`Welcome ${member.user} to our server! :anatomical_heart: You are **${userAmount}th** user!`);
+
+    const profileModel = require("./events/models/profileSchema");
+
+    let profile = profileModel.create({
+        userID: member.id,
+        serverID: member.guild.id,
+        coins: 0,
+    });
+    profile.save();
 });
+
+
 
 client.on('guildMemberRemove', (member) => {
     const userAmount = guild.members.cache.filter(member => !member.user.bot).size;
@@ -114,6 +160,8 @@ client.on('guildMemberRemove', (member) => {
     console.log(`${member.user.tag} left the ${guild.name} server.`)
 });
 
+
+
 // client.on('channelCreate', (guild) => {
 //     const auditLogNames = ["audit-log", "auditlog", "audit", "changelog"];
 //     const auditLogChannel = guild.channels.cache.get(channel => channel.name.includes(auditLogNames.length));
@@ -124,13 +172,78 @@ client.on('guildMemberRemove', (member) => {
 //     console.log('channelCreate works!')
 // });
 
-client.on('messageCreate', message => {
+
+
+client.on('messageCreate', async (message) => {
+    const profileModel = require("./events/models/profileSchema");
     let muckServer = client.guilds.cache.get('887353786094481428');
-    let muckChannel = muckServer.channels.cache.get('887371661492494406');
+    let muckChannelReady = muckServer.channels.cache.get('887371661492494406');
+    const badWords = [
+        "muckbot is bad",
+        "muckbot trash",
+        "trash muckbot",
+        "bad muckbot"
+    ];
 
-    if (!message.content.toLowerCase().startsWith(defaultPrefix) || message.author.bot) return;
+    const badWordsFind = !!badWords.find((word) => {
+        const regex = new RegExp(`\\b${word}\\b`, 'i'); // if the phrase is not alphanumerical,
+        return regex.test(message.content);
+    });
 
-    const args = message.content.slice(defaultPrefix.length).split(/ +/);
+    if (badWordsFind) {
+        return message.reply({ content: 'Hi, whatchu talking about me?' })
+    }
+
+    const p = await client.prefix(message)
+    if (!message.content.toLowerCase().startsWith(p) || message.author.bot) return;
+    const userTarget = message.mentions.members.first();
+
+    let profileData;
+    try {
+        profileData = await profileModel.findOne({ userID: message.author.id });
+        if (!profileData) {
+            let profile = await profileModel.create({
+                name: message.author.tag,
+                userID: message.author.id,
+                serverName: message.guild.name,
+                serverID: message.guild.id,
+                coins: 0,
+            });
+            profile.save();
+        }
+    } catch (err) {
+        console.log(err);
+    }
+
+    let profileDataUser;
+    try {
+        profileDataUser = await profileModel.findOne({ userID: userTarget.id });
+        if (!profileDataUser) {
+            let profileUser = await profileModel.create({
+                name: userTarget.tag,
+                userID: userTarget.id,
+                serverName: message.guild.name,
+                serverID: message.guild.id,
+                coins: 0,
+            });
+            profileUser.save();
+        }
+    } catch (err) {
+        console.log(err);
+    }
+
+    if (!profileData) {
+        let profileUser = await profileModel.create({
+            name: user.tag,
+            userID: user.id,
+            serverName: message.guild.name,
+            serverID: message.guild.id,
+            coins: 0,
+        });
+        profileUser.save();
+    }
+
+    const args = message.content.slice(prefix.length).split(/ +/);
     const command = args.shift().toLowerCase();
     const ownerId = (message.author.id === '733342027366006874');
     const ownerId2 = ('733342027366006874')
@@ -139,6 +252,12 @@ client.on('messageCreate', message => {
         message.reply('You have to type in something!'), message.react('❌');
     }
 
+    // if (command.cooldown) {
+    //     if (Timeout.has(`${command.name}${message.author.id}`)) {
+    //
+    //     }
+    // }
+
     if (command === 'verify') {
         client.commands.get('verify').execute(message, args);
 
@@ -146,7 +265,7 @@ client.on('messageCreate', message => {
         message.reply('Hello ' + `<@${message.author.id}>` + '!');
 
     } else if (command == 'admin') {
-        message.reply('https://tenor.com/view/dance-moves-dancing-singer-groovy-gif-17029825 ' + args);
+        client.commands.get('admin').execute(message, args, Discord)
 
     } else if (command == 'say') {
         const replies = ['Stop trying.', "If you can't tag everyone, why are you doing this?", 'If you do that a lot, you can result a ban!']
@@ -182,7 +301,7 @@ client.on('messageCreate', message => {
         message.react("<:youtube:887361211031748719>");
 
     } else if (command === 'img' || command === 'image') {
-        client.commands.get('image').execute(message, args, Discord);
+        client.commands.get('image').execute(message, args, Discord, badWordsFind);
 
     } else if (command === 'play') {
         client.commands.get('play').execute(message, args, Discord);
@@ -343,37 +462,32 @@ client.on('messageCreate', message => {
     }
 
     else if (command === 'announce') {
-        try {
-            message.guild.cache.forEach(guild => {
-                try {
-                    const channel = guild.channels.cache.find(channel => channel.name === 'announcements') || guild.channels.cache.first();
-                    if (channel) {
-                        channel.send(args.join(" "));
-                    } else {
-                        console.log('The server ' + guild.name + ' has no channels with the name: ' + channel.name);
-                    }
-                } catch (err) {
-                    console.log('Could not send message to ' + guild.name + '.');
-                }
-            });
-        } catch (err) {
-            message.reply('⚠ Error:' + '```' + err + '```')
+        if (!ownerId) {
+            message.reply(`Only <@${ownerId2}> can announce anything!`)
         }
 
-        /*
-        message.guild.channels.cache.forEach(guild => {
+        else {
             try {
-                const channel = guild.channels.cache.find(channel => channel.name === 'announcements') || guild.channels.cache.first();
-                if (channel) {
-                    channel.send(args.join(" "));
-                } else {
-                    console.log('The server ' + guild.name + ' has no channels with the name: ' + channel.name);
-                }
+                client.guilds.cache.forEach(guild => {
+                    try {
+                        const channel = guild.channels.cache.find(channel => channel.name === 'announcements') || guild.channels.cache.first();
+                        if (channel) {
+                            channel.send(args.join(" "));
+                        } else {
+                            console.log('The server ' + guild.name + ' has no channels with the name: ' + channel.name);
+                        }
+                    } catch (err) {
+                        console.log(
+                            '%cCould not send message to %c' + guild.name + '.',
+                            'color: blue',
+                            'color: red'
+                        );
+                    }
+                });
             } catch (err) {
-                console.log('Could not send message to ' + guild.name + '.');
+                message.reply('⚠ Error:' + '```' + err + '```')
             }
-        });
-        */
+        }
     }
 
     else if (command === 'math') {
@@ -427,7 +541,7 @@ client.on('messageCreate', message => {
         if (!args[0]) return message.reply('You have to insert website link!'), message.react('❌');
 
         else {
-            message.reply(`https://${args[0]}/`)
+            message.reply(`https://${args[0]}/${args[1]}`)
         }
     }
 
@@ -443,8 +557,8 @@ client.on('messageCreate', message => {
         }
     }
 
-    else if (command === 'trigger' || command === 'triggered') {
-        client.commands.get('trigger').execute(message, args, Discord)
+    else if (command === 'imgman' || command === 'imageman') {
+        client.commands.get('imgman').execute(message, args, Discord)
     }
 
     else if (command === 'canvas') {
@@ -458,7 +572,11 @@ client.on('messageCreate', message => {
     else if (command === 'dm') {
         const user = message.mentions.users.first()
 
-        if (!args) {
+        if (!message.guild) {
+            message.reply("You can't use this command in DMs!")
+        }
+
+        else if (!args) {
             message.reply('What do you want me to DM?')
         }
         else if (user) {
@@ -478,26 +596,7 @@ client.on('messageCreate', message => {
     }
 
     else if (command === 'anondm') {
-        const user = message.mentions.users.first()
-
-        if (!args) {
-            message.reply('What do you want me to DM?')
-        }
-        else if (user) {
-            if (!args[1]) {
-                message.reply('You have to type in what you want me to DM!')
-            }
-            else {
-                message.react('👍')
-                message.reply(`Anonymously DMing ${user.username}...`).then(msg => {
-                    setTimeout(() => msg.delete(), 3000)
-                    setTimeout(function () {
-                        message.delete()
-                    }, 3000);
-                })
-                user.send(`**Anonymous** from **${message.guild.name}** sent you a DM: ${args.join(' ')}`)
-            }
-        }
+        client.commands.get('anondm').execute(message, args)
     }
 
     else if (command === 'minesweeper' || command === 'ms') {
@@ -665,15 +764,6 @@ client.on('messageCreate', message => {
         }
     }
 
-    else if (command === 's2') {
-        function argsReplace() {
-            var argsRepl = args.join(' ');
-            var argsNew = argsRepl.replace(/ /g, "-");
-
-            message.reply(argsNew)
-        }
-    }
-
     else if (command === 'letters') {
         var reply = "";
 
@@ -699,6 +789,7 @@ client.on('messageCreate', message => {
     else if (command === 'tts') {
         message.channel.send({ content: args.join(' '), tts: true }).then(async msg => {
             setTimeout(() => {
+                message.delete();
                 msg.delete();
             }, 10000);
         })
@@ -730,10 +821,69 @@ client.on('messageCreate', message => {
         client.commands.get('generate').execute(message, args)
     }
 
-    else if (command === 'bdc') {
-        message.reply(['cat', 'poo', 'epic trol'].join('+'))
-        
+    else if (command === 'bal') {
+        client.commands.get('balance').execute(message, args, profileData, profileDataUser)
     }
-})
+
+    else if (command === 'beg') {
+        client.commands.get('beg').execute(message, args, ownerId, ownerId2)
+    }
+
+    else if (command === 'leaderboard' || command === 'lb') {
+        client.commands.get('leaderboard').execute(message, args, profileData)
+    }
+
+    else if (command === 'give') {
+        client.commands.get('give').execute(message, args)
+    }
+
+    else if (command === 'priv') {
+        if (!message.guild) {
+            message.reply("You can't use this command in DMs!")
+        }
+
+        else {
+            if (!message.member.permissions.has('ADMINISTRATOR')) {
+                message.reply("You can't send a private message to everyone!")
+            }
+
+            else {
+                if (!args.length) {
+                    message.reply('You have to type in what do you want to sent')
+                }
+
+                else {
+                    let text = message.content.slice('m!priv '.length);
+                    message.guild.members.cache.forEach(member => {
+                        if (member.id != client.user.id && !member.user.bot) member.send(
+                            `**${message.author.tag}** from **${message.guild.name}** privately announced:\n${text}`
+                        );
+                    });
+                }
+            }
+        }
+    }
+
+    else if (command === 'setprefix') {
+        client.commands.get('setprefix').execute(message, args)
+    }
+
+    else if (command === 'prefix') {
+        message.reply(`This server's prefix is: **${p}**`)
+    }
+
+    else if (command === 'members') {
+        message.guild.members.cache.map()
+    }
+});
+
+client.on('error', (error) => {
+    let muckServer = client.guilds.cache.get('887353786094481428');
+    let muckChannelError = muckServer.channels.cache.get('895386734660026400');
+
+    muckChannelError.send(error);
+});
+
+
 
 client.login(process.env.DISCORD_TOKEN);

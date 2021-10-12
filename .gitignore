@@ -10,3 +10,6 @@ commands/jsons
 commands/img
 docs
 botwords.json
+handlers
+events/client
+events/guild
