@@ -1,5 +1,5 @@
 const db = require('quick.db');
-const { millify } = require('millify')
+const { millify } = require('millify');
 
 module.exports = {
     name: "balance",

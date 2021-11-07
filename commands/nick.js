@@ -1,16 +1,16 @@
 module.exports = {
     name: 'nick',
-    description: "this is a ping command!",
-    execute(message, args){
+    description: "set a custom nickname!",
+    execute(message, args, client){
+        // if (!message.member.permissions.has('MANAGE_NICKNAMES')) {
+        //     message.reply('u cant')
+        // }
 
-        if(message.member.roles.cache.has('863413406152785978')){
-            guildMember.setNickname(nick, [])
+        // else {
+        //     message.author.setNick(args[0])
+        //     message.reply('nick set!')
+        // }
 
-        } else {
-            message.channel.send("Verified succesfully! Now you have access to " + '<&863483819108466688>' + " chat! :partying_face:")
-            message.member.roles.add('863413406152785978')
-        }
-
-
+        message.guild.author.nickname(args[0], []).then(message.reply('nick set!'))
     }
 }

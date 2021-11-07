@@ -13,7 +13,7 @@ module.exports = {
         });
 
         if (!user) {
-            let image = await canvacord.Canvas.spotify(avatar);
+            let image = await canvacord.Canvas.trigger(avatar);
             let attachment = new Discord.MessageAttachment(image, `${message.author.username}-imageManipulation.png`);
             return message.reply({ files: [attachment] });
         }

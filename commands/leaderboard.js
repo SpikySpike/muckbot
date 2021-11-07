@@ -16,14 +16,15 @@ module.exports = {
 
         await Promise.all(
             message.guild.members.cache.map(async (member) => {
-                const id = member.id;
-                const bal = await profileData.coins;
-                console.log(`${member.user.tag} -> ${bal}`);
-                return bal !== 0 ? collection.set(id, {
-                    id,
-                    bal,
-                })
-                :null
+                // const id = member.id;
+                // const bal = await profileData.coins;
+                // console.log(`${member.user.tag} -> ${bal}`);
+                // return bal !== 0 ? collection.set(id, {
+                //     id,
+                //     bal,
+                // })
+                // :null
+                return(console.log('hi'))
             })
         );
 

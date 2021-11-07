@@ -1,16 +1,12 @@
 const { MessageActionRow, MessageButton } = require('discord.js');
-const clipboardy = require('clipboardy')
+const clipboard = require('clipboardy');
+const interaction = require('@discordjs/builders')
 
 module.exports = {
     name: 'test',
     description: 'Joins and plays a video from YouTube',
     async execute(message, args, Discord, client) {
-        if (!args[0]) {
-            message.reply('try args `btn`')
-        }
-
-        else if (args[0] === 'btn') {
-            const testBtn = new MessageActionRow()
+        const testBtn = new MessageActionRow()
             .addComponents(
                 new MessageButton()
                     .setLabel('Click!')
@@ -18,15 +14,40 @@ module.exports = {
                     .setStyle('PRIMARY')
             );
 
-            message.reply({ content: 'Test!', components: [testBtn]})
+        if (!args[0]) {
+            message.reply('try args `btn`')
         }
 
-        client.on('clickButton', async (button) => {
-            if (button.id === 'helpLinkCopy') {
-                console.log(button.id)
-                navigator.clipboard.writeText('test');
-                message.author.reply({ content: 'Copied!', ephemeral: true })
-            }
-        })
+        else if (args[0] === 'btn') {
+            message.reply({ content: 'Test!', components: [testBtn]})
+        }
+        
+        const testEmbed = new Discord.MessageEmbed()
+            .setColor('GREEN')
+            .setTitle('Copied')
+            .setDescription('Copied the link to clipboard!')
+
+        // const embedMessage = message.reply({ content: 'Test!', components: [testBtn]})
+        
+        // const collector = interaction.channel.createMessageCollector({ 
+        //     filter, 
+        //     time: 15000
+        // });
+
+        // collector.on('collect', async (interaction) => {
+        //     interaction.customId === 'copyBtn'
+        //     await interaction.update(navigator.clipboard.writeText('test'), 
+        //     {
+        //         embeds: [testEmbed]
+        //     })
+        // })
+
+        // collector.on('collect', m => {
+        //     console.log(`Collected ${m.content}`);
+        // });
+        
+        // collector.on('end', collected => {
+        //     console.log(`Collected ${collected.size} items`);
+        // });
     }
 }

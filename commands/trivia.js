@@ -19,10 +19,10 @@ module.exports = {
                 winMessage: 'GG, It was **{{answer}}**. You gave the correct answer in **{{time}}**.',
                 loseMessage: 'Better luck next time! The correct answer was **{{answer}}**.',
                 emojis: {
-                    one: '1️⃣',
-                    two: '2️⃣',
-                    three: '3️⃣',
-                    four: '4️⃣',
+                    one: '<:1_:901566022908248104>',
+                    two: '<:2_:901566022899879946>',
+                    three: '<:3_:901566144664731718>',
+                    four: '<:4_:901566144622784532>',
                 },
                 othersMessage: 'Only <@{{author}}> can use the buttons!',
                 returnWinner: false
@@ -44,10 +44,10 @@ module.exports = {
                 winMessage: 'GG, It was **{{answer}}**. You gave the correct answer in **{{time}}**.',
                 loseMessage: 'Better luck next time! The correct answer was **{{answer}}**.',
                 emojis: {
-                    one: '1️⃣',
-                    two: '2️⃣',
-                    three: '3️⃣',
-                    four: '4️⃣',
+                    one: '<:1_:901566022908248104>',
+                    two: '<:2_:901566022899879946>',
+                    three: '<:3_:901566144664731718>',
+                    four: '<:4_:901566144622784532>',
                 },
                 othersMessage: 'Only <@{{author}}> can use the buttons!',
                 returnWinner: false
@@ -69,10 +69,10 @@ module.exports = {
                 winMessage: 'GG, It was **{{answer}}**. You gave the correct answer in **{{time}}**.',
                 loseMessage: 'Better luck next time! The correct answer was **{{answer}}**.',
                 emojis: {
-                    one: '1️⃣',
-                    two: '2️⃣',
-                    three: '3️⃣',
-                    four: '4️⃣',
+                    one: '<:1_:901566022908248104>',
+                    two: '<:2_:901566022899879946>',
+                    three: '<:3_:901566144664731718>',
+                    four: '<:4_:901566144622784532>',
                 },
                 othersMessage: 'Only <@{{author}}> can use the buttons!',
                 returnWinner: false
@@ -94,10 +94,10 @@ module.exports = {
                 winMessage: 'GG, It was **{{answer}}**. You gave the correct answer in **{{time}}**.',
                 loseMessage: 'Better luck next time! The correct answer was **{{answer}}**.',
                 emojis: {
-                    one: '1️⃣',
-                    two: '2️⃣',
-                    three: '3️⃣',
-                    four: '4️⃣',
+                    one: '<:1_:901566022908248104>',
+                    two: '<:2_:901566022899879946>',
+                    three: '<:3_:901566144664731718>',
+                    four: '<:4_:901566144622784532>',
                 },
                 othersMessage: 'Only <@{{author}}> can use the buttons!',
                 returnWinner: false

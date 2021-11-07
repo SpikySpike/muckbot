@@ -1,12 +1,21 @@
-const { joinVoiceChannel } = require('@discordjs/voice');
-const player = require('discord-player');
+const {
+    joinVoiceChannel
+} = require('@discordjs/voice');
+// const player = require('discord-player');
+const {
+    Player
+} = require("discord-player");
 const ytdl = require('ytdl-core');
 const ytSearch = require('yt-search');
+const colorThief = require('colorthief');
+const {
+    millify
+} = require('millify');
 
 module.exports = {
     name: 'play',
     description: 'Joins and plays a video from YouTube',
-    async execute(message, args, Discord, ownerId) {
+    async execute(message, args, Discord, ownerId, client) {
         const voiceChannel = await message.member.voice.channel;
 
         if (!voiceChannel) return message.reply('You need to be in a voice channel to use this command!'), message.react("❌");
@@ -26,30 +35,41 @@ module.exports = {
 
             return (videoResult.videos.length > 1) ? videoResult.videos[0] : null;
         }
-
-        const video = await videoFinder(args.join(' '));
-
         try {
-            if (video) {
-                const stream = ytdl(video.url, { filter: 'audioonly' });
-                connection.play(stream, { seek: 0, volume: 1 })
-                .on('finish', () => {
-                    voiceChannel.leave();
+            const video = await videoFinder(args.join(' '));
+            colorThief.getColor(video.thumbnail).then(imageColor => {
+                const imageColorHex = "#" + imageColor.map(c => Number(c).toString(16)).join("");
+                console.log(`${video.title} Color Hex:`, imageColorHex);
+                const videoViews = millify(video.views, {
+                    precision: 2,
+                    decimalSeparator: ","
                 });
-    
-                const videoEmbed = new Discord.MessageEmbed()
-                    .setColor('RANDOM')
-                    .setTitle('🎶 Now playing...')
-                    .setURL(video.url)
-                    .setDescription(video.title)
-                    .setImage(video.thumbnail)
-                    .setTimestamp()
-                    .setFooter(video.duration);
-    
-                await message.reply({ embeds: [videoEmbed] });
-            } else {
-                message.reply('No video results found :(')
-            }
+
+                if (!video) {
+                    message.reply('No video results found :(')
+                } else {
+                    // const stream = ytdl(video.url, { filter: 'audioonly' });
+                    // connection.play(stream, { seek: 0, volume: 1 })
+                    //     .on('finish', () => {
+                    //         voiceChannel.leave();
+                    //     });
+
+                    const videoEmbed = new Discord.MessageEmbed()
+                        .setColor(`${imageColorHex}`)
+                        .setAuthor(`${video.author.name}`)
+                        .setTitle('🎶 Now playing...')
+                        .setURL(`${video.url}`)
+                        .setDescription(`${video.title}`)
+                        .setImage(`${video.thumbnail}`)
+                        .setFooter(`Duration: ${video.duration} • Views: ${videoViews}`)
+                        .setTimestamp();
+
+                    message.reply({
+                        embeds: [videoEmbed]
+                    });
+                }
+
+            })
         } catch (err) {
             message.reply('⚠ Error:' + '```' + err + '```')
             console.log(err.stack)

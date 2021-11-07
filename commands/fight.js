@@ -10,14 +10,14 @@ module.exports = {
             message.reply('You have to type in who do you want to fight!'), message.react('❌');
         }
 
-        else if (!(args[0] = user)) {
+        else if (!user) {
             message.reply('Invalid user name!'), message.react('❌');
         }
 
-        else {
-            await Fight({
+        else if (user){
+            Fight({
                 message: message,
-                opponent: message.mentions.users.first(),
+                opponent: user,
                 embed: {
                     title: 'Fight',
                     color: 'RANDOM',
